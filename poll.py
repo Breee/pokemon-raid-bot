@@ -1,18 +1,37 @@
+"""
+MIT License
+
+Copyright (c) 2018 Breee
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import discord
 from discord.ext import commands
-import asyncio
 import logging
 import threading
 import time
-import operator
-from datetime import datetime, timedelta
-
 
 bot = commands.Bot(description="Raid Leader, a Bot for Pokemon Go raid organization.", command_prefix=("!raid-", "!r-"))
 
 config_file = open('config.conf')
 log_file = 'pollbot.log'
-
 token = ""
 playing = ""
 
@@ -36,18 +55,19 @@ MSG_UPDATE_INTERVAL = 100
 
 # Dictionary that maps the numblock emojis to a number.
 EMOJI_TO_NUMBER = {
-    "\U00000031\U000020E3": 1,
-    "\U00000032\U000020E3": 2,
-    "\U00000033\U000020E3": 3,
-    "\U00000034\U000020E3": 4,
-    "\U00000035\U000020E3": 5,
-    "\U00000036\U000020E3": 6,
-    "\U00000037\U000020E3": 7,
-    "\U00000038\U000020E3": 8,
-    "\U00000039\U000020E3": 9,
-    "\U0001F51F": 10
+    "\U00000031\U000020E3": 0,
+    "\U00000032\U000020E3": 1,
+    "\U00000033\U000020E3": 2,
+    "\U00000034\U000020E3": 3,
+    "\U00000035\U000020E3": 4,
+    "\U00000036\U000020E3": 5,
+    "\U00000037\U000020E3": 6,
+    "\U00000038\U000020E3": 7,
+    "\U00000039\U000020E3": 8,
+    "\U0001F51F": 9
     }
-# Reverse of EMOJI_TO_NUMBER (The usual python way of reversing dicts does not work)
+
+# Reverse of EMOJI_TO_NUMBER
 NUMBER_TO_EMOJI = {
     0 :"\U00000031\U000020E3",
     1 :"\U00000032\U000020E3",
@@ -140,13 +160,12 @@ async def poll(ctx, poll_title, *, timepoints_string=""):
 
     sorted_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in \
                     sorted(EMOJI_TO_NUMBER, key=EMOJI_TO_NUMBER.get)]
+
     for emoji, n in sorted_emoji:
         if n <= len(timepoints_list):
             await bot.add_reaction(message, emoji)
-
     sorted_people_emoji = [(k, PEOPLE_EMOJI_TO_NUMBER[k]) for k in \
                            sorted(PEOPLE_EMOJI_TO_NUMBER, key=PEOPLE_EMOJI_TO_NUMBER.get)]
-
     for emoji, n in sorted_people_emoji:
         await bot.add_reaction(message, emoji)
 
@@ -209,7 +228,8 @@ def update_embed(embed, emoji_to_fields, reactions):
 @bot.event
 async def on_message_delete(message):
     for msg in SAVED_MESSAGES:
-        if msg[0] == message:
+        if msg[0].content == message.content:
+            logger.info("Deleted message %s" % msg[0])
             await bot.delete_message(msg[3])
             SAVED_MESSAGES.remove(msg)
 
