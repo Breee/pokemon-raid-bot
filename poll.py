@@ -28,7 +28,8 @@ import logging
 import threading
 import time
 
-bot = commands.Bot(description="Raid Leader, a Bot for Pokemon Go raid organization.", command_prefix=("!raid-", "!r-"))
+bot = commands.Bot(description="Raid Leader, a Bot for Pokemon Go raid organization.",
+                   command_prefix=("!raid-", "!r-"))
 
 config_file = open('config.conf')
 log_file = 'pollbot.log'
@@ -162,7 +163,7 @@ async def poll(ctx, poll_title, *, timepoints_string=""):
                     sorted(EMOJI_TO_NUMBER, key=EMOJI_TO_NUMBER.get)]
 
     for emoji, n in sorted_emoji:
-        if n <= len(timepoints_list):
+        if n <= len(timepoints_list)-1:
             await bot.add_reaction(message, emoji)
     sorted_people_emoji = [(k, PEOPLE_EMOJI_TO_NUMBER[k]) for k in \
                            sorted(PEOPLE_EMOJI_TO_NUMBER, key=PEOPLE_EMOJI_TO_NUMBER.get)]
