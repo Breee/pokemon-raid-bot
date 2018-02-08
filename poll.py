@@ -66,29 +66,30 @@ EMOJI_TO_NUMBER = {
     "\U00000038\U000020E3": 7,
     "\U00000039\U000020E3": 8,
     "\U0001F51F": 9
-    }
+}
 
 # Reverse of EMOJI_TO_NUMBER
 NUMBER_TO_EMOJI = {
-    0 :"\U00000031\U000020E3",
-    1 :"\U00000032\U000020E3",
-    2 :"\U00000033\U000020E3",
-    3 :"\U00000034\U000020E3",
-    4 :"\U00000035\U000020E3",
-    5 :"\U00000036\U000020E3",
-    6 :"\U00000037\U000020E3",
-    7 :"\U00000038\U000020E3",
-    8 :"\U00000039\U000020E3",
-    9 :"\U0001F51F",
-    }
+    0: "\U00000031\U000020E3",
+    1: "\U00000032\U000020E3",
+    2: "\U00000033\U000020E3",
+    3: "\U00000034\U000020E3",
+    4: "\U00000035\U000020E3",
+    5: "\U00000036\U000020E3",
+    6: "\U00000037\U000020E3",
+    7: "\U00000038\U000020E3",
+    8: "\U00000039\U000020E3",
+    9: "\U0001F51F",
+}
 
 # Dictionary that maps the people emojis to a number.
-# The emojis in this dict are used in the raid-poll to express the amount of extra people someone brings to a raid.
+# The emojis in this dict are used in the raid-poll to express the amount of extra people someone
+#  brings to a raid.
 PEOPLE_EMOJI_TO_NUMBER = {
-   "\U0001F57A" : 1,
-   "\U0001F46D" : 2,
-   "\U0001F46A" : 3,
-   "\U0001F468\U0000200D\U0001F469\U0000200D\U0001F467\U0000200D\U0001F466" : 4
+    "\U0001F57A": 1,
+    "\U0001F46D": 2,
+    "\U0001F46A": 3,
+    "\U0001F468\U0000200D\U0001F469\U0000200D\U0001F467\U0000200D\U0001F466": 4
 }
 
 SAVED_MESSAGES = []
@@ -97,7 +98,7 @@ POLL_ID_COUNTER = 0
 
 def update_msgs():
     for message in SAVED_MESSAGES:
-        if (time.time() - message[2] > TIMEOUT):
+        if time.time() - message[2] > TIMEOUT:
             SAVED_MESSAGES.remove(message)
     threading.Timer(MSG_UPDATE_INTERVAL, update_msgs).start()
 
@@ -119,6 +120,7 @@ async def on_ready():
 async def ping():
     await bot.say("I'm awake!")
 
+
 @bot.command(pass_context=True)
 async def poll(ctx, poll_title, *, timepoints_string=""):
     global POLL_ID_COUNTER
@@ -137,7 +139,7 @@ async def poll(ctx, poll_title, *, timepoints_string=""):
                       'Usage:\n !raid-poll "<poll title>" <option_1> ... <option_10>\n'
                       '\n'
                       'Example:\n !raid-poll "Kyogre Jump & twist" 19:00 19:15 19:30 19:40' % (
-                      ctx.message.author.mention, ctx.message.content))
+                          ctx.message.author.mention, ctx.message.content))
         return
     if len(timepoints_list) > len(EMOJI_TO_NUMBER):
         # ERROR 2
@@ -149,23 +151,24 @@ async def poll(ctx, poll_title, *, timepoints_string=""):
                       '\n'
                       'Usage:\n !raid-poll "<poll title>" <option_1> ... <option_10>\n'
                       '\n'
-                      'Example:\n !raid-poll "Kyogre Jump & twist" 19:00 19:15 19:30 19:40' % (ctx.message.author.mention, ctx.message.content))
+                      'Example:\n !raid-poll "Kyogre Jump & twist" 19:00 19:15 19:30 19:40' % (
+                          ctx.message.author.mention, ctx.message.content))
         return
 
-    embed,emoji_to_embed_field = create_raid_embed(title=title, timepoints=timepoints_list)
+    embed, emoji_to_embed_field = create_raid_embed(title=title, timepoints=timepoints_list)
     message = await bot.send_message(message.channel,
                                      content="Created poll #%s." % POLL_ID_COUNTER,
                                      embed=embed)
     msg_summary = [message, [], time.time(), None, embed, emoji_to_embed_field]
     SAVED_MESSAGES.append(msg_summary)
 
-    sorted_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in \
+    sorted_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in
                     sorted(EMOJI_TO_NUMBER, key=EMOJI_TO_NUMBER.get)]
 
     for emoji, n in sorted_emoji:
-        if n <= len(timepoints_list)-1:
+        if n <= len(timepoints_list) - 1:
             await bot.add_reaction(message, emoji)
-    sorted_people_emoji = [(k, PEOPLE_EMOJI_TO_NUMBER[k]) for k in \
+    sorted_people_emoji = [(k, PEOPLE_EMOJI_TO_NUMBER[k]) for k in
                            sorted(PEOPLE_EMOJI_TO_NUMBER, key=PEOPLE_EMOJI_TO_NUMBER.get)]
     for emoji, n in sorted_people_emoji:
         await bot.add_reaction(message, emoji)
@@ -192,20 +195,24 @@ def update_embed(embed, emoji_to_fields, reactions):
     :param reactions: a list of tuples of the form [(reaction_0, user_0),...,(reaction_n, user_n)]
     :return:
     """
-    new_embed = discord.Embed(title=embed.title, colour=discord.Colour(0x700000), description=embed.description)
+    new_embed = discord.Embed(title=embed.title, colour=discord.Colour(0x700000),
+                              description=embed.description)
     # list of users which reacted to a certain field in the embed
     reaction_to_user = {}
     # list of users which come not alone
     people_to_user = {}
-    # for each reaction, user tuple in reactions, we fill the dictionaries reaction_to_user, people_to_user.
+    # for each reaction, user tuple in reactions, we fill the dictionaries reaction_to_user, people
+    # _to_user.
     for reaction, user in reactions:
-        # add a user to reaction_to_user if he reacted with an emoji that equals an emoji mapped to a field in the embed
+        # add a user to reaction_to_user if he reacted with an emoji that equals an emoji mapped
+        # to a field in the embed
         if reaction.emoji in emoji_to_fields.keys():
             reaction_to_user.setdefault(emoji_to_fields[reaction.emoji], []).append(user.name)
             if user.name not in people_to_user.keys():
                 # by default every user comes alone. i.e. counts as one person.
                 people_to_user[user.name] = 1
-        # add a user to people_to_user, if he reacted with an emoji that equals an emoji of the PEOPLE_EMOJI_TO_NUMBER dict.
+        # add a user to people_to_user, if he reacted with an emoji that equals an emoji of the
+        # PEOPLE_EMOJI_TO_NUMBER dict.
         if reaction.emoji in PEOPLE_EMOJI_TO_NUMBER.keys():
             if user.name in people_to_user:
                 people_to_user[user.name] += PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
@@ -218,13 +225,14 @@ def update_embed(embed, emoji_to_fields, reactions):
             people = ""
             for i, user in enumerate(reaction_to_user[field.name]):
                 people += user + " [%d] " % people_to_user[user]
-                if i < len(reaction_to_user[field.name]) -1:
+                if i < len(reaction_to_user[field.name]) - 1:
                     people += ", "
                 total += people_to_user[user]
             new_embed.add_field(name=field.name + " [%d]" % total, value=people, inline=False)
         else:
             new_embed.add_field(name=field.name, value="-", inline=False)
     return new_embed
+
 
 @bot.event
 async def on_message_delete(message):
@@ -243,7 +251,7 @@ async def on_reaction_add(reaction, user):
                 if reaction.message.content == message[0].content:
                     message[1].append((reaction, user))
                     embed = update_embed(message[4], message[5], message[1])
-                    if message[1] != None:
+                    if message[1] is not None:
                         await edit_msg(reaction.message, embed)
 
 
@@ -255,7 +263,7 @@ async def on_reaction_remove(reaction, user):
                 if reaction.message.content == message[0].content:
                     message[1].remove((reaction, user))
                     embed = update_embed(message[4], message[5], message[1])
-                    if message[1] != None:
+                    if message[1] is not None:
                         await edit_msg(reaction.message, embed)
 
 
