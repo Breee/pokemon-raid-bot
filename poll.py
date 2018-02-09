@@ -173,7 +173,7 @@ async def create_poll(ctx, poll_title, timepoints):
     message = await bot.send_message(message.channel,
                      content="Created poll #%s.\n%s" % (POLL_ID_COUNTER,title),
                      embed=embed)
-    msg_summary = [message, [], time.time(), None, embed, emoji_to_embed_field]
+    msg_summary = [message, [], time.time(), (POLL_ID_COUNTER, title), embed, emoji_to_embed_field, ctx.message]
     SAVED_MESSAGES.append(msg_summary)
 
     sorted_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in
@@ -250,11 +250,13 @@ def update_embed(embed, emoji_to_fields, reactions):
 
 @bot.event
 async def on_message_delete(message):
-    for msg in SAVED_MESSAGES:
-        if msg[0].content == message.content:
-            logger.info("Deleted message %s" % msg[0])
-            await bot.delete_message(msg[3])
-            SAVED_MESSAGES.remove(msg)
+    if isinstance(message, discord.Message):
+        for msg in SAVED_MESSAGES:
+            if msg[6].id == message.id:
+                logger.info("Deleted message %s" % msg[0].content)
+                await bot.delete_message(msg[0])
+                await bot.send_message(message.channel, content="Deleted poll #%s: %s\n" % (msg[3][0], msg[3][1]))
+                SAVED_MESSAGES.remove(msg)
 
 
 @bot.event
