@@ -169,9 +169,9 @@ async def create_poll(ctx, poll_title, timepoints):
                     ctx.message.author.mention, ctx.message.content))
         return
 
-    embed, emoji_to_embed_field = create_raid_embed(title=title, timepoints=timepoints_list)
+    embed, emoji_to_embed_field = create_raid_embed(title="", timepoints=timepoints_list)
     message = await bot.send_message(message.channel,
-                     content="Created poll #%s." % POLL_ID_COUNTER,
+                     content="Created poll #%s.\n%s" % (POLL_ID_COUNTER,title),
                      embed=embed)
     msg_summary = [message, [], time.time(), None, embed, emoji_to_embed_field]
     SAVED_MESSAGES.append(msg_summary)
