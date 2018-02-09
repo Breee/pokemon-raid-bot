@@ -27,6 +27,7 @@ from discord.ext import commands
 import logging
 import threading
 import time
+from utils import replace_quotes
 
 bot = commands.Bot(description="Raid Leader, a Bot for Pokemon Go raid organization.",
                    command_prefix=("!raid-", "!r-"))
@@ -122,43 +123,56 @@ async def ping():
 
 
 @bot.command(pass_context=True)
-async def poll(ctx, poll_title, *, timepoints_string=""):
+async def poll(ctx, poll_title, *timepoints):
+    # dirty hacks TODO: remove asap and find a proper solution.
+    if '„' in ctx.message.content and '“' in ctx.message.content:
+        # replace stupid quotes
+        ctx.message.content = replace_quotes(ctx.message.content)
+        # rebuild args
+        cmd = ctx.message.content.replace('!raid-poll ', '').split('$$$')
+        poll_title = cmd[0].replace('"', '')
+        timepoints = cmd[1].strip().split(" ")
+
+    await create_poll(ctx, poll_title, timepoints)
+
+
+async def create_poll(ctx, poll_title, timepoints):
     global POLL_ID_COUNTER
     POLL_ID_COUNTER += 1
     message = ctx.message
     title = poll_title
-    timepoints_list = timepoints_string.split(" ")
-    if not timepoints_string:
+    timepoints_list = timepoints
+    if not timepoints:
         # ERROR 1
         await bot.say('ERROR 1:\n'
-                      'No vote options provided.\n'
-                      '\n'
-                      'Command used by %s:\n'
-                      '%s \n'
-                      '\n'
-                      'Usage:\n !raid-poll "<poll title>" <option_1> ... <option_10>\n'
-                      '\n'
-                      'Example:\n !raid-poll "Kyogre Jump & twist" 19:00 19:15 19:30 19:40' % (
-                          ctx.message.author.mention, ctx.message.content))
+                'No vote options provided.\n'
+                '\n'
+                'Command used by %s:\n'
+                '%s \n'
+                '\n'
+                'Usage:\n !raid-poll "<poll title>" <option_1> ... <option_10>\n'
+                '\n'
+                'Example:\n !raid-poll "Kyogre Jump & twist" 19:00 19:15 19:30 19:40' % (
+                    ctx.message.author.mention, ctx.message.content))
         return
     if len(timepoints_list) > len(EMOJI_TO_NUMBER):
         # ERROR 2
         await bot.say('ERROR 2:\n'
-                      'The maximum number of vote options is 10.\n'
-                      '\n'
-                      'Command used by %s:\n'
-                      '%s \n'
-                      '\n'
-                      'Usage:\n !raid-poll "<poll title>" <option_1> ... <option_10>\n'
-                      '\n'
-                      'Example:\n !raid-poll "Kyogre Jump & twist" 19:00 19:15 19:30 19:40' % (
-                          ctx.message.author.mention, ctx.message.content))
+                'The maximum number of vote options is 10.\n'
+                '\n'
+                'Command used by %s:\n'
+                '%s \n'
+                '\n'
+                'Usage:\n !raid-poll "<poll title>" <option_1> ... <option_10>\n'
+                '\n'
+                'Example:\n !raid-poll "Kyogre Jump & twist" 19:00 19:15 19:30 19:40' % (
+                    ctx.message.author.mention, ctx.message.content))
         return
 
     embed, emoji_to_embed_field = create_raid_embed(title=title, timepoints=timepoints_list)
     message = await bot.send_message(message.channel,
-                                     content="Created poll #%s." % POLL_ID_COUNTER,
-                                     embed=embed)
+                     content="Created poll #%s." % POLL_ID_COUNTER,
+                     embed=embed)
     msg_summary = [message, [], time.time(), None, embed, emoji_to_embed_field]
     SAVED_MESSAGES.append(msg_summary)
 
