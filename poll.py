@@ -255,7 +255,7 @@ async def on_message_delete(message):
             if msg[6].id == message.id:
                 logger.info("Deleted message %s" % msg[0].content)
                 await bot.delete_message(msg[0])
-                await bot.send_message(message.channel, content="Deleted poll #%s: %s\n" % (msg[3][0], msg[3][1]))
+                await bot.send_message(message.channel, content="Deleted poll #%s: %s" % (msg[3][0], msg[3][1]))
                 SAVED_MESSAGES.remove(msg)
 
 
