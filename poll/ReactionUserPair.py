@@ -15,10 +15,10 @@ class ReactionUserPair(object):
         else:
             raise TypeError("The provided user is not of type %s, but %s" % (discord.User.__name__, user.__class__))
 
-    def __repr__(self):
+    def __str__(self):
         """
         >>> pair = ReactionUserPair(discord.Reaction(emoji=':thumbsup:'), discord.User(username='Testman'))
-        >>> pair.__repr__()
+        >>> pair.__str__()
         '(Reaction.emoji=:thumbsup:, User.name=Testman)'
 
         :return:
