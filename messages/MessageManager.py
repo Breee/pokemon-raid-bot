@@ -18,14 +18,12 @@ class MessageManager(object):
                 "We expect a dictionary oft the form: { message_ID -> message}" % (dict.__name__, messages))
         self.pollmessage_id_to_pollmessage = dict()
         self.triggermessage_id_to_pollmessage = dict()
-        self.triggermessage_id_to_triggermessage = dict()
         self.pollmessage_id_to_poll_id = dict()
         self.id_counter = len(self.messages)
 
     def create_message(self, trigger_message, poll_message, poll_id):
         self.pollmessage_id_to_pollmessage[poll_message.id] = poll_message
         self.triggermessage_id_to_pollmessage[trigger_message.id] = poll_message
-        self.triggermessage_id_to_triggermessage[trigger_message.id] = trigger_message
         self.pollmessage_id_to_poll_id[poll_message.id] = poll_id
         self.id_counter += 1
 

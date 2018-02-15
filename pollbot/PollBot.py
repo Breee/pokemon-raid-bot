@@ -39,20 +39,13 @@ class PollBot(commands.Bot):
         await self.say("pong!")
 
     @commands.command(pass_context=True)
-    async def poll(self, ctx, poll_title, *timepoints):
+    async def poll(self, ctx, poll_title, *vote_options):
         # dirty hacks TODO: remove asap and find a proper solution.
         if '„' in ctx.message.content and '“' in ctx.message.content:
-            # replace stupid quotes
-            ctx.message.content = replace_quotes(ctx.message.content)
-            # rebuild args
-            cmd = ctx.message.content.replace('!raid-poll ', '').split('$$$')
-            poll_title = cmd[0].replace('"', '')
-            timepoints = cmd[1].strip().split(" ")
+            poll_title, vote_options = self.preprocess_poll_command(ctx.message.content)
+        await self.create_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
 
-        await self.create_poll(ctx, poll_title, timepoints)
-
-    async def create_poll(self, ctx, poll_title, vote_options):
-        trigger_message = ctx.message
+    async def create_poll(self, trigger_message, poll_title, vote_options):
         poll = self.poll_factory.create_poll(poll_title=poll_title, vote_options=vote_options)
         poll_message = await self.send_message(trigger_message.channel,
                                           content="Created poll #%s.\n%s" % (poll.poll_ID, poll_title),
@@ -102,12 +95,48 @@ class PollBot(commands.Bot):
         if isinstance(message, discord.Message):
             if message.id in self.message_manager.triggermessage_id_to_pollmessage:
                 pollmessage = self.message_manager.triggermessage_id_to_pollmessage[message.id]
-                # get poll
-                poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage.id]
-                # add reactions
-                poll = self.poll_factory.polls[poll_id]
-                await self.delete_message(pollmessage)
-                await self.send_message(message.channel, content="Deleted poll #%s: %s" % (poll.poll_ID, poll.poll_title))
+                await self.delete_pollmessage(pollmessage=pollmessage, triggermessage=message)
+
+    async def delete_pollmessage(self, pollmessage, triggermessage, post_notification=True):
+        # get poll
+        poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage.id]
+        # add reactions
+        poll = self.poll_factory.polls[poll_id]
+        await self.delete_message(pollmessage)
+        if post_notification:
+            await self.send_message(triggermessage.channel, content="Deleted poll #%s: %s" % (poll.poll_ID, poll.poll_title))
+
+    async def on_message_edit(self, before, after):
+        if before.content is not after.content:
+            if before.id in self.message_manager.triggermessage_id_to_pollmessage:
+                pollmessage = self.message_manager.triggermessage_id_to_pollmessage[before.id]
+                if self.is_poll_command(after.content):
+                    if '„' in after.content and '“' in after.content:
+                        poll_title, vote_options = self.preprocess_poll_command(after.content)
+                    else:
+                        # rebuild args
+                        cmd = after.content.replace('!raid-poll ', '').split(' ')
+                        poll_title = cmd[0].strip()
+                        vote_options = cmd[1:]
+                    await self.delete_pollmessage(pollmessage=pollmessage, triggermessage=after, post_notification=False)
+                    await self.create_poll(trigger_message=after, poll_title=poll_title, vote_options=vote_options)
+                else:
+                    await self.delete_pollmessage(pollmessage=pollmessage, triggermessage=after, post_notification=True)
+
+
+    def is_poll_command(self, message_content):
+        poll_command = '%spoll' % self.command_prefix
+        return message_content.startswith(poll_command)
+
+    def preprocess_poll_command(self, command):
+        # replace stupid quotes
+        command = replace_quotes(command)
+        # rebuild args
+        cmd = command.replace('!raid-poll ', '').split('$$$')
+        poll_title = cmd[0].replace('"', '')
+        vote_options = cmd[1].strip().split(" ")
+        return poll_title, vote_options
+
 
     async def edit_msg(self, message, embed):
         await self.edit_message(message, message.content, embed=embed)
