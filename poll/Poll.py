@@ -68,7 +68,7 @@ class Poll(object):
                     people_to_user[user.name] += PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
                 else:
                     people_to_user[user.name] = 1 + PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
-
+        # create fields
         for field in old_embed.fields:
             if field.name in reaction_to_user.keys():
                 total = 0

@@ -1,7 +1,6 @@
 from config.Configuration import Configuration
 from messages.MessageManager import MessageManager
 from poll.PollFactory import PollFactory
-from poll.ReactionUserPair import ReactionUserPair
 from discord.ext import commands
 from utils import replace_quotes
 from poll.emoji_storage import *
@@ -46,6 +45,14 @@ class PollBot(commands.Bot):
         await self.create_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
 
     async def create_poll(self, trigger_message, poll_title, vote_options):
+        """
+        Function that creates a new poll and posts it.
+        :param trigger_message: Message which triggered the creation of the poll
+        :param poll_title: Title of the poll
+        :param vote_options: List of string which contains vote options.
+        :return:
+        """
+        # Create a new poll and post it.
         poll = self.poll_factory.create_poll(poll_title=poll_title, vote_options=vote_options)
         poll_message = await self.send_message(trigger_message.channel,
                                           content="Created poll #%s.\n%s" % (poll.poll_ID, poll_title),
@@ -53,11 +60,13 @@ class PollBot(commands.Bot):
 
         self.message_manager.create_message(trigger_message=trigger_message, poll_message=poll_message, poll_id=poll.poll_ID)
 
+        # add vote emojies as reaction
         sorted_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in sorted(EMOJI_TO_NUMBER, key=EMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_emoji:
             if n <= len(vote_options) - 1:
                 await self.add_reaction(poll_message, emoji)
 
+        # add people emojie as reaction
         sorted_people_emoji = [(k, PEOPLE_EMOJI_TO_NUMBER[k]) for k in
                                sorted(PEOPLE_EMOJI_TO_NUMBER, key=PEOPLE_EMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_people_emoji:
@@ -65,6 +74,7 @@ class PollBot(commands.Bot):
 
     async def on_reaction_add(self, reaction, user):
         if user != self.user:
+            # reaction has to be part of the vote emojies/ people emojies
             if reaction.emoji in EMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
                 if reaction.message.id in self.message_manager.pollmessage_id_to_pollmessage:
                     # get poll
@@ -98,6 +108,13 @@ class PollBot(commands.Bot):
                 await self.delete_pollmessage(pollmessage=pollmessage, triggermessage=message)
 
     async def delete_pollmessage(self, pollmessage, triggermessage, post_notification=True):
+        """
+        Fucntion which deletes a pollmessage
+        :param pollmessage: message which contains the poll.
+        :param triggermessage: message which triggered the creation of the poll.
+        :param post_notification: Boolean which determines whether a notification about the deletion gets posted or not.
+        :return:
+        """
         # get poll
         poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage.id]
         # add reactions
@@ -129,6 +146,7 @@ class PollBot(commands.Bot):
         return message_content.startswith(poll_command)
 
     def preprocess_poll_command(self, command):
+        #TODO: HACK!
         # replace stupid quotes
         command = replace_quotes(command)
         # rebuild args
