@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="147b4b69-3b14-432e-b005-b5b4bcc1b7c1" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/messages/MessageManager.py" afterPath="$PROJECT_DIR$/messages/MessageManager.py" />
       <change beforePath="$PROJECT_DIR$/poll/Poll.py" afterPath="$PROJECT_DIR$/poll/Poll.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,6 +18,7 @@
     <SUITE FILE_PATH="coverage/pokemon_raid_bot$Unittests_for_ReactionUserPairTest_MyTestCase.coverage" NAME="Unittests for ReactionUserPairTest.MyTestCase Coverage Results" MODIFIED="1518202136672" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/poll" />
     <SUITE FILE_PATH="coverage/pokemon_raid_bot$Doctest_ReactionUserPair___str__.coverage" NAME="Doctest ReactionUserPair.__str__ Coverage Results" MODIFIED="1518704309587" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/poll" />
     <SUITE FILE_PATH="coverage/pokemon_raid_bot$Unittests_in_ReactionUserPairTest_py.coverage" NAME="Unittests in ReactionUserPairTest.py Coverage Results" MODIFIED="1518201727825" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/poll" />
+    <SUITE FILE_PATH="coverage/pokemon_raid_bot$Doctest_Configuration_read_config_file.coverage" NAME="Doctest Configuration.read_config_file Coverage Results" MODIFIED="1518709089495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/config" />
     <SUITE FILE_PATH="coverage/pokemon_raid_bot$Doctest_replace_quotes.coverage" NAME="Doctest replace_quotes Coverage Results" MODIFIED="1518195645882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pokemon_raid_bot$Doctest_ReactionUserPair___repr__.coverage" NAME="Doctest ReactionUserPair.__repr__ Coverage Results" MODIFIED="1518205318217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/poll" />
   </component>
@@ -24,38 +27,18 @@
       <file leaf-file-name="poll.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/poll.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1297">
-              <caret line="251" column="37" lean-forward="true" selection-start-line="251" selection-start-column="37" selection-end-line="251" selection-end-column="37" />
+            <state relative-caret-position="288">
+              <caret line="261" column="10" lean-forward="true" selection-start-line="261" selection-start-column="10" selection-end-line="261" selection-end-column="10" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.conf" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config.conf">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Poll.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Poll.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/poll/Poll.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="73" column="30" lean-forward="true" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
+            <state relative-caret-position="322">
+              <caret line="84" column="11" lean-forward="false" selection-start-line="84" selection-start-column="11" selection-end-line="84" selection-end-column="11" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -63,12 +46,58 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="emoji_storage.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/poll/emoji_storage.py">
+      <file leaf-file-name="config.conf" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.conf">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="538">
-              <caret line="36" column="1" lean-forward="false" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
+            <state relative-caret-position="0">
+              <caret line="0" column="6" lean-forward="true" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="65" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PollBot.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pollbot/PollBot.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="106">
+              <caret line="7" column="51" lean-forward="true" selection-start-line="7" selection-start-column="51" selection-end-line="7" selection-end-column="51" />
+              <folding>
+                <element signature="e#0#46#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="start_bot.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/start_bot.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="71" lean-forward="false" selection-start-line="2" selection-start-column="71" selection-end-line="2" selection-end-column="71" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Message.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/messages/Message.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MessageManager.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/messages/MessageManager.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="432">
+              <caret line="24" column="34" lean-forward="true" selection-start-line="24" selection-start-column="34" selection-end-line="24" selection-end-column="34" />
+              <folding>
+                <element signature="e#0#36#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -76,8 +105,8 @@
       <file leaf-file-name="PollFactory.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/poll/PollFactory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1026">
-              <caret line="57" column="28" lean-forward="true" selection-start-line="57" selection-start-column="28" selection-end-line="57" selection-end-column="28" />
+            <state relative-caret-position="249">
+              <caret line="18" column="28" lean-forward="true" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -85,21 +114,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ChannelMessagePair.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/messages/ChannelMessagePair.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="98" lean-forward="false" selection-start-line="18" selection-start-column="98" selection-end-line="18" selection-end-column="98" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ReactionUserPair.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/poll/ReactionUserPair.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="10" column="81" lean-forward="true" selection-start-line="10" selection-start-column="81" selection-end-line="10" selection-end-column="126" />
+            <state relative-caret-position="450">
+              <caret line="25" column="90" lean-forward="true" selection-start-line="25" selection-start-column="90" selection-end-line="25" selection-end-column="90" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -128,14 +147,23 @@
         <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/poll/ReactionUserPairTest.py" />
         <option value="$PROJECT_DIR$/poll/ChannelMessagePair.py" />
-        <option value="$PROJECT_DIR$/poll.py" />
         <option value="$PROJECT_DIR$/config.conf" />
         <option value="$PROJECT_DIR$/botclass.py" />
         <option value="$PROJECT_DIR$/poll/ActivePoll.py" />
         <option value="$PROJECT_DIR$/poll/ReactionUserPair.py" />
         <option value="$PROJECT_DIR$/poll/PollFactory.py" />
         <option value="$PROJECT_DIR$/poll/emoji_storage.py" />
+        <option value="$PROJECT_DIR$/PollBot/PollBot.py" />
+        <option value="$PROJECT_DIR$/config/test.conf" />
+        <option value="$PROJECT_DIR$/config/Configuration.py" />
+        <option value="$PROJECT_DIR$/poll/poll_errors.py" />
+        <option value="$PROJECT_DIR$/poll/poll_exceptions.py" />
         <option value="$PROJECT_DIR$/poll/Poll.py" />
+        <option value="$PROJECT_DIR$/poll.py" />
+        <option value="$PROJECT_DIR$/messages/MessageManager.py" />
+        <option value="$PROJECT_DIR$/messages/Message.py" />
+        <option value="$PROJECT_DIR$/pollbot/PollBot.py" />
+        <option value="$PROJECT_DIR$/start_bot.py" />
       </list>
     </option>
   </component>
@@ -183,7 +211,17 @@
             <path>
               <item name="pokemon-raid-bot" type="b2602c69:ProjectViewProjectNode" />
               <item name="pokemon-raid-bot" type="462c0819:PsiDirectoryNode" />
+              <item name="messages" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pokemon-raid-bot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pokemon-raid-bot" type="462c0819:PsiDirectoryNode" />
               <item name="poll" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pokemon-raid-bot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pokemon-raid-bot" type="462c0819:PsiDirectoryNode" />
+              <item name="pollbot" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -216,7 +254,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python tests.Doctest ReactionUserPair.__str__">
+  <component name="RunManager" selected="Python tests.Doctest Configuration.read_config_file">
     <configuration name="Doctest ChannelMessagePair.__repr__" type="tests" factoryName="Doctests" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -231,6 +269,25 @@
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/messages/ChannelMessagePair.py" />
       <option name="CLASS_NAME" value="ChannelMessagePair" />
       <option name="METHOD_NAME" value="__repr__" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_METHOD" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+    </configuration>
+    <configuration name="Doctest Configuration.read_config_file" type="tests" factoryName="Doctests" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/config" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="pokemon-raid-bot" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/config/Configuration.py" />
+      <option name="CLASS_NAME" value="Configuration" />
+      <option name="METHOD_NAME" value="read_config_file" />
       <option name="FOLDER_NAME" value="" />
       <option name="TEST_TYPE" value="TEST_METHOD" />
       <option name="PATTERN" value="" />
@@ -289,35 +346,20 @@
       <option name="_new_target" value="&quot;ReactionUserPairTest.MyTestCase&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
     </configuration>
-    <configuration name="Unittests in ReactionUserPairTest.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/poll" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="pokemon-raid-bot" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/poll/ReactionUserPairTest.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-    </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python tests.Unittests in ReactionUserPairTest.py" />
-      <item index="1" class="java.lang.String" itemvalue="Python tests.Unittests for ReactionUserPairTest.MyTestCase" />
-      <item index="2" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__repr__" />
-      <item index="3" class="java.lang.String" itemvalue="Python tests.Doctest ChannelMessagePair.__repr__" />
-      <item index="4" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__str__" />
+      <item index="0" class="java.lang.String" itemvalue="Python tests.Unittests for ReactionUserPairTest.MyTestCase" />
+      <item index="1" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__repr__" />
+      <item index="2" class="java.lang.String" itemvalue="Python tests.Doctest ChannelMessagePair.__repr__" />
+      <item index="3" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__str__" />
+      <item index="4" class="java.lang.String" itemvalue="Python tests.Doctest Configuration.read_config_file" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__str__" />
-        <item index="1" class="java.lang.String" itemvalue="Python tests.Doctest ChannelMessagePair.__repr__" />
-        <item index="2" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__repr__" />
-        <item index="3" class="java.lang.String" itemvalue="Python tests.Unittests for ReactionUserPairTest.MyTestCase" />
-        <item index="4" class="java.lang.String" itemvalue="Python tests.Unittests in ReactionUserPairTest.py" />
+        <item index="0" class="java.lang.String" itemvalue="Python tests.Doctest Configuration.read_config_file" />
+        <item index="1" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__str__" />
+        <item index="2" class="java.lang.String" itemvalue="Python tests.Doctest ChannelMessagePair.__repr__" />
+        <item index="3" class="java.lang.String" itemvalue="Python tests.Doctest ReactionUserPair.__repr__" />
+        <item index="4" class="java.lang.String" itemvalue="Python tests.Unittests for ReactionUserPairTest.MyTestCase" />
       </list>
     </recent_temporary>
   </component>
@@ -338,17 +380,17 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Doctest_ChannelMessagePair___repr__ - 2018.02.09 at 21h 00m 10s.xml">
-      <configuration name="Doctest ChannelMessagePair.__repr__" configurationId="tests" />
+    <history-entry file="Doctest_Configuration_read_config_file - 2018.02.15 at 16h 33m 55s.xml">
+      <configuration name="Doctest Configuration.read_config_file" configurationId="tests" />
     </history-entry>
-    <history-entry file="Doctest_ChannelMessagePair___repr__ - 2018.02.09 at 21h 03m 53s.xml">
-      <configuration name="Doctest ChannelMessagePair.__repr__" configurationId="tests" />
+    <history-entry file="Doctest_Configuration_read_config_file - 2018.02.15 at 16h 34m 22s.xml">
+      <configuration name="Doctest Configuration.read_config_file" configurationId="tests" />
     </history-entry>
-    <history-entry file="Doctest_ReactionUserPair___repr__ - 2018.02.09 at 20h 38m 02s.xml">
-      <configuration name="Doctest ReactionUserPair.__repr__" configurationId="tests" />
+    <history-entry file="Doctest_Configuration_read_config_file - 2018.02.15 at 16h 34m 38s.xml">
+      <configuration name="Doctest Configuration.read_config_file" configurationId="tests" />
     </history-entry>
-    <history-entry file="Doctest_ReactionUserPair___repr__ - 2018.02.09 at 20h 39m 56s.xml">
-      <configuration name="Doctest ReactionUserPair.__repr__" configurationId="tests" />
+    <history-entry file="Doctest_Configuration_read_config_file - 2018.02.15 at 16h 38m 09s.xml">
+      <configuration name="Doctest Configuration.read_config_file" configurationId="tests" />
     </history-entry>
     <history-entry file="Doctest_ReactionUserPair___repr__ - 2018.02.09 at 20h 40m 23s.xml">
       <configuration name="Doctest ReactionUserPair.__repr__" configurationId="tests" />
@@ -597,14 +639,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/messages/ChannelMessagePair.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -613,49 +647,129 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/poll/ReactionUserPair.py">
+    <entry file="file://$PROJECT_DIR$/config/test.conf">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="81" lean-forward="true" selection-start-line="10" selection-start-column="81" selection-end-line="10" selection-end-column="126" />
+        <state relative-caret-position="54">
+          <caret line="3" column="20" lean-forward="true" selection-start-line="3" selection-start-column="20" selection-end-line="3" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/poll/emoji_storage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="36" column="1" lean-forward="false" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/poll/poll_errors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/poll/poll_exceptions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/Configuration.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="30" column="40" lean-forward="true" selection-start-line="30" selection-start-column="40" selection-end-line="30" selection-end-column="40" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/poll.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="261" column="10" lean-forward="true" selection-start-line="261" selection-start-column="10" selection-end-line="261" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/poll/PollFactory.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1026">
-          <caret line="57" column="28" lean-forward="true" selection-start-line="57" selection-start-column="28" selection-end-line="57" selection-end-column="28" />
+        <state relative-caret-position="249">
+          <caret line="18" column="28" lean-forward="true" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/poll/emoji_storage.py">
+    <entry file="file://$PROJECT_DIR$/messages/Message.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="538">
-          <caret line="36" column="1" lean-forward="false" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
-          <folding />
+        <state relative-caret-position="180">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/poll.py">
+    <entry file="file://$PROJECT_DIR$/poll/ReactionUserPair.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1297">
-          <caret line="251" column="37" lean-forward="true" selection-start-line="251" selection-start-column="37" selection-end-line="251" selection-end-column="37" />
+        <state relative-caret-position="450">
+          <caret line="25" column="90" lean-forward="true" selection-start-line="25" selection-start-column="90" selection-end-line="25" selection-end-column="90" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/messages/MessageManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="24" column="34" lean-forward="true" selection-start-line="24" selection-start-column="34" selection-end-line="24" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="6" lean-forward="true" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="65" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/poll/Poll.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="73" column="30" lean-forward="true" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
+        <state relative-caret-position="322">
+          <caret line="84" column="11" lean-forward="false" selection-start-line="84" selection-start-column="11" selection-end-line="84" selection-end-column="11" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pollbot/PollBot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="106">
+          <caret line="7" column="51" lean-forward="true" selection-start-line="7" selection-start-column="51" selection-end-line="7" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/start_bot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="71" lean-forward="false" selection-start-line="2" selection-start-column="71" selection-end-line="2" selection-end-column="71" />
+          <folding />
         </state>
       </provider>
     </entry>
