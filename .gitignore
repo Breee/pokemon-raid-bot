@@ -2,3 +2,5 @@
 config\.conf
 
 pollbot\.log
+
+__pycache__/
