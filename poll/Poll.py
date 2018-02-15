@@ -15,13 +15,15 @@ class Poll(object):
         self.poll_ID = id # some human readable id.
         self.creation_time = time.time() # timestamp
         self.poll_title = poll_title # string
+        self.reaction_to_embed_field = dict()  # dict that maps reactions to embed field names.
+        self.reactions = []
         if vote_options:
             self.vote_options = vote_options # list of strings
         else:
             raise PollCreationException("ERROR 1:\n no vote options provided.")
         self.embed = self.create_embed(vote_options=vote_options) # embed to represent the poll.
-        self.reaction_to_embed_field = dict() # dict that maps reactions to embed field names.
-        self.reactions = None
+        self.original_embed = self.create_embed(vote_options=vote_options) # embed to represent the poll.
+
 
     def create_embed(self, vote_options):
         """
@@ -37,12 +39,12 @@ class Poll(object):
             self.reaction_to_embed_field[emoji] = field_name
         return embed
 
-    def update_embed(self, reactions):
+    def update_embed(self):
         """
         Function which shall update self.embed.
         :return:
         """
-        old_embed = self.embed
+        old_embed = self.original_embed
         new_embed = discord.Embed(title=old_embed.title, colour=discord.Colour(0x700000),
                                   description=old_embed.description)
         # list of users which reacted to a certain field in the embed
@@ -51,7 +53,7 @@ class Poll(object):
         people_to_user = {}
         # for each reaction, user tuple in reactions, we fill the dictionaries reaction_to_user, people
         # _to_user.
-        for reaction, user in reactions:
+        for reaction, user in self.reactions:
             # add a user to reaction_to_user if he reacted with an emoji that equals an emoji mapped
             # to a field in the embed
             if reaction.emoji in self.reaction_to_embed_field.keys():

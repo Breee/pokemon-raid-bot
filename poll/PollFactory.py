@@ -32,6 +32,7 @@ class PollFactory(object):
         new_poll = Poll(id=self.id_counter,poll_title=poll_title, vote_options=vote_options)
         self.add_poll(poll_id=self.id_counter, poll=new_poll)
         self.id_counter += 1
+        return new_poll
 
     def update_poll(self, poll_id, poll_title, vote_options):
         """

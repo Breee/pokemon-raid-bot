@@ -1,4 +1,4 @@
-from messages.Message import Message
+from messages.StoredMessage import StoredMessage
 import logging
 import time
 logger = logging.getLogger('discord')
@@ -16,19 +16,24 @@ class MessageManager(object):
             raise TypeError(
                 "The provided messages object is not of type %s, but %s.\n"
                 "We expect a dictionary oft the form: { message_ID -> message}" % (dict.__name__, messages))
+        self.pollmessage_id_to_pollmessage = dict()
+        self.triggermessage_id_to_pollmessage = dict()
+        self.triggermessage_id_to_triggermessage = dict()
+        self.pollmessage_id_to_poll_id = dict()
         self.id_counter = len(self.messages)
 
     def create_message(self, trigger_message, poll_message, poll_id):
-        self.add_message(Message(message_id=self.id_counter,
-                                 trigger_message=trigger_message,
-                                 poll_message=poll_message,
-                                 poll_id=poll_id))
+        self.pollmessage_id_to_pollmessage[poll_message.id] = poll_message
+        self.triggermessage_id_to_pollmessage[trigger_message.id] = poll_message
+        self.triggermessage_id_to_triggermessage[trigger_message.id] = trigger_message
+        self.pollmessage_id_to_poll_id[poll_message.id] = poll_id
+        self.id_counter += 1
 
     def add_message(self, message):
-        if isinstance(message, Message):
+        if isinstance(message, StoredMessage):
             self.messages[message.message_id] = message
         else:
-            raise TypeError("parameter message is not of type %s but %s" % (Message.__name__, message.__class__))
+            raise TypeError("parameter message is not of type %s but %s" % (StoredMessage.__name__, message.__class__))
 
     def delete_message(self, message_id):
         self.messages.pop(message_id, None)
