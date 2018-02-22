@@ -17,5 +17,5 @@ playing=I enjoy raiding!
 #### 3. Run the bot
 
 ```
-python3 poll.py
+python3 start_bot.py
 ```
