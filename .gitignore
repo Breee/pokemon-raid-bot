@@ -4,3 +4,7 @@ config\.conf
 pollbot\.log
 
 __pycache__/
+
+venv/
+
+\.idea/

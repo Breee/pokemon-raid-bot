@@ -2,6 +2,9 @@ from config.Configuration import Configuration
 from messages.MessageManager import MessageManager
 from poll.PollFactory import PollFactory
 from discord.ext import commands
+from discord.ext.commands import Context, CommandError, CommandNotFound
+from discord.ext.commands.view import StringView
+import asyncio
 from utils import replace_quotes
 from poll.emoji_storage import *
 import discord
@@ -40,8 +43,8 @@ class PollBot(commands.Bot):
     @commands.command(pass_context=True)
     async def poll(self, ctx, poll_title, *vote_options):
         # dirty hacks TODO: remove asap and find a proper solution.
-        if '„' in ctx.message.content and '“' in ctx.message.content:
-            poll_title, vote_options = self.preprocess_poll_command(ctx.message.content)
+        #if '„' in ctx.message.content and '“' in ctx.message.content:
+        #    poll_title, vote_options = self.preprocess_poll_command(ctx.message.content)
         await self.create_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
 
     async def create_poll(self, trigger_message, poll_title, vote_options):
@@ -114,6 +117,7 @@ class PollBot(commands.Bot):
         :param triggermessage: message which triggered the creation of the poll.
         :param post_notification: Boolean which determines whether a notification about the deletion gets posted or not.
         :return:
+
         """
         # get poll
         poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage.id]
@@ -146,14 +150,81 @@ class PollBot(commands.Bot):
         return message_content.startswith(poll_command)
 
     def preprocess_poll_command(self, command):
-        #TODO: HACK!
         # replace stupid quotes
         command = replace_quotes(command)
         # rebuild args
-        cmd = command.replace('!raid-poll ', '').split('$$$')
+        cmd = command.replace('!raid-poll ', '')
         poll_title = cmd[0].replace('"', '')
         vote_options = cmd[1].strip().split(" ")
         return poll_title, vote_options
+
+
+    @asyncio.coroutine
+    def process_commands(self, message):
+        """|coro|
+
+        This function processes the commands that have been registered
+        to the bot and other groups. Without this coroutine, none of the
+        commands will be triggered.
+
+        By default, this coroutine is called inside the :func:`on_message`
+        event. If you choose to override the :func:`on_message` event, then
+        you should invoke this coroutine as well.
+
+        Warning
+        --------
+        This function is necessary for :meth:`say`, :meth:`whisper`,
+        :meth:`type`, :meth:`reply`, and :meth:`upload` to work due to the
+        way they are written. It is also required for the :func:`on_command`
+        and :func:`on_command_completion` events.
+
+        Parameters
+        -----------
+        message : discord.Message
+            The message to process commands for.
+        """
+        message.content =  replace_quotes(message.content)
+        _internal_channel = message.channel
+        _internal_author = message.author
+
+        view = StringView(message.content)
+        if self._skip_check(message.author, self.user):
+            return
+
+        prefix = yield from self._get_prefix(message)
+        invoked_prefix = prefix
+
+        if not isinstance(prefix, (tuple, list)):
+            if not view.skip_string(prefix):
+                return
+        else:
+            invoked_prefix = discord.utils.find(view.skip_string, prefix)
+            if invoked_prefix is None:
+                return
+
+        invoker = view.get_word()
+        tmp = {
+            'bot': self,
+            'invoked_with': invoker,
+            'message': message,
+            'view': view,
+            'prefix': invoked_prefix
+        }
+        ctx = Context(**tmp)
+        del tmp
+
+        if invoker in self.commands:
+            command = self.commands[invoker]
+            self.dispatch('command', command, ctx)
+            try:
+                yield from command.invoke(ctx)
+            except CommandError as e:
+                ctx.command.dispatch_error(e, ctx)
+            else:
+                self.dispatch('command_completion', command, ctx)
+        elif invoker:
+            exc = CommandNotFound('Command "{}" is not found'.format(invoker))
+            self.dispatch('command_error', exc, ctx)
 
 
     async def edit_msg(self, message, embed):
