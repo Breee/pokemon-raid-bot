@@ -1,6 +1,5 @@
 from messages.StoredMessage import StoredMessage
 import logging
-import time
 logger = logging.getLogger('discord')
 
 

@@ -25,6 +25,25 @@ class PollBot(commands.Bot):
     async def on_ready(self):
         self.up_time = datetime.datetime.utcnow()
         print(self.up_time)
+        global PEOPLE_EMOJI_TO_NUMBER
+        server_emojies = self.get_all_emojis()
+        for emojie in server_emojies:
+            number = None
+            if "plus_one" in emojie.name:
+                number = 1
+            elif "plus_two" in emojie.name:
+                number = 2
+            elif "plus_three" in emojie.name:
+                number = 3
+            elif "plus_four" in emojie.name:
+                number = 4
+
+            if number is not None:
+                PEOPLE_EMOJI_TO_NUMBER[emojie] = number
+
+        if len(PEOPLE_EMOJI_TO_NUMBER) != 4:
+           PEOPLE_EMOJI_TO_NUMBER = dict()
+           PEOPLE_EMOJI_TO_NUMBER = DEFAULT_PEOPLE_EMOJI_TO_NUMBER
 
     def run(self):
         super().run(self.config.token)
@@ -42,9 +61,6 @@ class PollBot(commands.Bot):
 
     @commands.command(pass_context=True)
     async def poll(self, ctx, poll_title, *vote_options):
-        # dirty hacks TODO: remove asap and find a proper solution.
-        #if '„' in ctx.message.content and '“' in ctx.message.content:
-        #    poll_title, vote_options = self.preprocess_poll_command(ctx.message.content)
         await self.create_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
 
     async def create_poll(self, trigger_message, poll_title, vote_options):
@@ -64,7 +80,7 @@ class PollBot(commands.Bot):
         self.message_manager.create_message(trigger_message=trigger_message, poll_message=poll_message, poll_id=poll.poll_ID)
 
         # add vote emojies as reaction
-        sorted_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in sorted(EMOJI_TO_NUMBER, key=EMOJI_TO_NUMBER.get)]
+        sorted_emoji = [(k, LETTEREMOJI_TO_NUMBER[k]) for k in sorted(LETTEREMOJI_TO_NUMBER, key=LETTEREMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_emoji:
             if n <= len(vote_options) - 1:
                 await self.add_reaction(poll_message, emoji)
@@ -78,7 +94,7 @@ class PollBot(commands.Bot):
     async def on_reaction_add(self, reaction, user):
         if user != self.user:
             # reaction has to be part of the vote emojies/ people emojies
-            if reaction.emoji in EMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
+            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
                 if reaction.message.id in self.message_manager.pollmessage_id_to_pollmessage:
                     # get poll
                     poll_id =  self.message_manager.pollmessage_id_to_poll_id[reaction.message.id]
@@ -92,7 +108,7 @@ class PollBot(commands.Bot):
 
     async def on_reaction_remove(self, reaction, user):
         if user != self.user:
-            if reaction.emoji in EMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
+            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
                 if reaction.message.id in self.message_manager.pollmessage_id_to_pollmessage:
                     # get poll
                     poll_id =  self.message_manager.pollmessage_id_to_poll_id[reaction.message.id]

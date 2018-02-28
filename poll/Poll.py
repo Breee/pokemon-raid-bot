@@ -32,7 +32,7 @@ class Poll(object):
         """
         embed = discord.Embed(colour=discord.Colour(0x700000))
         for i in range(len(vote_options)):
-            emoji = NUMBER_TO_EMOJI[i]
+            emoji = NUMBER_TO_LETTEREMOJI[i]
             vote_option = vote_options[i]
             field_name = "%s %s" % (emoji, vote_option)
             embed.add_field(name=field_name, value="-", inline=False)
