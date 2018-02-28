@@ -132,15 +132,8 @@ class PollBot(commands.Bot):
             if before.id in self.message_manager.triggermessage_id_to_pollmessage:
                 pollmessage = self.message_manager.triggermessage_id_to_pollmessage[before.id]
                 if self.is_poll_command(after.content):
-                    if '„' in after.content and '“' in after.content:
-                        poll_title, vote_options = self.preprocess_poll_command(after.content)
-                    else:
-                        # rebuild args
-                        cmd = after.content.replace('!raid-poll ', '').split(' ')
-                        poll_title = cmd[0].strip()
-                        vote_options = cmd[1:]
                     await self.delete_pollmessage(pollmessage=pollmessage, triggermessage=after, post_notification=False)
-                    await self.create_poll(trigger_message=after, poll_title=poll_title, vote_options=vote_options)
+                    await self.process_commands(after)
                 else:
                     await self.delete_pollmessage(pollmessage=pollmessage, triggermessage=after, post_notification=True)
 
@@ -152,10 +145,12 @@ class PollBot(commands.Bot):
     def preprocess_poll_command(self, command):
         # replace stupid quotes
         command = replace_quotes(command)
+        view = StringView(command)
+        print(view)
         # rebuild args
-        cmd = command.replace('!raid-poll ', '')
+        cmd = command.replace('!raid-poll ', '').split(' ')
         poll_title = cmd[0].replace('"', '')
-        vote_options = cmd[1].strip().split(" ")
+        vote_options = cmd[1:len(command)]
         return poll_title, vote_options
 
 
