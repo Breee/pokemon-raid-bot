@@ -12,7 +12,7 @@ import datetime
 import aiohttp
 import logging
 
-logger = logging.getLogger('raidquaza')
+logger = logging.getLogger('discord')
 
 class PollBot(commands.Bot):
     def __init__(self, prefix, description, config_file):
@@ -30,20 +30,20 @@ class PollBot(commands.Bot):
         logger.info("Bot is ready.")
         self.start_time = datetime.datetime.utcnow()
         global PEOPLE_EMOJI_TO_NUMBER
-        server_emojies = self.get_all_emojis()
-        for emojie in server_emojies:
+        server_emojis = self.get_all_emojis()
+        for emoji in server_emojis:
             number = None
-            if "rq_plus_one" in emojie.name:
+            if "rq_plus_one" in emoji.name:
                 number = 1
-            elif "rq_plus_two" in emojie.name:
+            elif "rq_plus_two" in emoji.name:
                 number = 2
-            elif "rq_plus_three" in emojie.name:
+            elif "rq_plus_three" in emoji.name:
                 number = 3
-            elif "rq_plus_four" in emojie.name:
+            elif "rq_plus_four" in emoji.name:
                 number = 4
 
             if number is not None:
-                PEOPLE_EMOJI_TO_NUMBER[emojie] = number
+                PEOPLE_EMOJI_TO_NUMBER[emoji] = number
 
         if len(PEOPLE_EMOJI_TO_NUMBER) != 4:
            PEOPLE_EMOJI_TO_NUMBER = dict()
@@ -103,7 +103,7 @@ class PollBot(commands.Bot):
 
     async def on_reaction_add(self, reaction, user):
         if user != self.user:
-            # reaction has to be part of the vote emojies/ people emojies
+            # reaction has to be part of the vote emojis/ people emojis
             if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
                 if reaction.message.id in self.message_manager.pollmessage_id_to_pollmessage:
                     # get poll
