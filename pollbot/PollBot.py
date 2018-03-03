@@ -10,7 +10,9 @@ from poll.emoji_storage import *
 import discord
 import datetime
 import aiohttp
+import logging
 
+logger = logging.getLogger('raidquaza')
 
 class PollBot(commands.Bot):
     def __init__(self, prefix, description, config_file):
@@ -20,22 +22,24 @@ class PollBot(commands.Bot):
         self.message_manager = MessageManager()
         self.add_command(self.ping)
         self.add_command(self.poll)
+        self.add_command(self.uptime)
         self.session = aiohttp.ClientSession(loop=self.loop)
+        self.start_time = 0
 
     async def on_ready(self):
-        self.up_time = datetime.datetime.utcnow()
-        print(self.up_time)
+        logger.info("Bot is ready.")
+        self.start_time = datetime.datetime.utcnow()
         global PEOPLE_EMOJI_TO_NUMBER
         server_emojies = self.get_all_emojis()
         for emojie in server_emojies:
             number = None
-            if "plus_one" in emojie.name:
+            if "rq_plus_one" in emojie.name:
                 number = 1
-            elif "plus_two" in emojie.name:
+            elif "rq_plus_two" in emojie.name:
                 number = 2
-            elif "plus_three" in emojie.name:
+            elif "rq_plus_three" in emojie.name:
                 number = 3
-            elif "plus_four" in emojie.name:
+            elif "rq_plus_four" in emojie.name:
                 number = 4
 
             if number is not None:
@@ -44,6 +48,8 @@ class PollBot(commands.Bot):
         if len(PEOPLE_EMOJI_TO_NUMBER) != 4:
            PEOPLE_EMOJI_TO_NUMBER = dict()
            PEOPLE_EMOJI_TO_NUMBER = DEFAULT_PEOPLE_EMOJI_TO_NUMBER
+
+        await self.change_presence(game=discord.Game(name=self.config.playing))
 
     def run(self):
         super().run(self.config.token)
@@ -58,6 +64,10 @@ class PollBot(commands.Bot):
     @commands.command(hidden=True)
     async def ping(self):
         await self.say("pong!")
+
+    @commands.command(hidden=True)
+    async def uptime(self):
+        await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
 
     @commands.command(pass_context=True)
     async def poll(self, ctx, poll_title, *vote_options):

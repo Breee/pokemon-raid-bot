@@ -15,18 +15,8 @@ EMOJI_TO_NUMBER = {
 }
 
 # Reverse of EMOJI_TO_NUMBER
-NUMBER_TO_EMOJI = {
-    0: "\U00000031\U000020E3",
-    1: "\U00000032\U000020E3",
-    2: "\U00000033\U000020E3",
-    3: "\U00000034\U000020E3",
-    4: "\U00000035\U000020E3",
-    5: "\U00000036\U000020E3",
-    6: "\U00000037\U000020E3",
-    7: "\U00000038\U000020E3",
-    8: "\U00000039\U000020E3",
-    9: "\U0001F51F",
-}
+NUMBER_TO_EMOJI = {val : key for key, val in EMOJI_TO_NUMBER.items()}
+
 """
 :regional_indicator_a:  \U0001F1E6
 :regional_indicator_b:  \U0001F1E7
@@ -52,18 +42,7 @@ LETTEREMOJI_TO_NUMBER = {
 '\U0001F1EF' : 9
 }
 
-NUMBER_TO_LETTEREMOJI = {
-0: '\U0001F1E6',
-1: '\U0001F1E7',
-2: '\U0001F1E8',
-3: '\U0001F1E9',
-4: '\U0001F1EA',
-5: '\U0001F1EB',
-6: '\U0001F1EC',
-7: '\U0001F1ED',
-8: '\U0001F1EE',
-9: '\U0001F1EF'
-}
+NUMBER_TO_LETTEREMOJI = {val : key for key, val in LETTEREMOJI_TO_NUMBER.items()}
 
 
 # Dictionary that maps the people emojis to a number.
