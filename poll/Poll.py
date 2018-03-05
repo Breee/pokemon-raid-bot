@@ -54,20 +54,21 @@ class Poll(object):
         # for each reaction, user tuple in reactions, we fill the dictionaries reaction_to_user, people
         # _to_user.
         for reaction, user in self.reactions:
+            username = user.display_name
             # add a user to reaction_to_user if he reacted with an emoji that equals an emoji mapped
             # to a field in the embed
             if reaction.emoji in self.reaction_to_embed_field.keys():
-                reaction_to_user.setdefault(self.reaction_to_embed_field[reaction.emoji], []).append(user.name)
-                if user.name not in people_to_user.keys():
+                reaction_to_user.setdefault(self.reaction_to_embed_field[reaction.emoji], []).append(username)
+                if username not in people_to_user.keys():
                     # by default every user comes alone. i.e. counts as one person.
-                    people_to_user[user.name] = 1
+                    people_to_user[username] = 1
             # add a user to people_to_user, if he reacted with an emoji that equals an emoji of the
             # PEOPLE_EMOJI_TO_NUMBER dict.
             if reaction.emoji in PEOPLE_EMOJI_TO_NUMBER.keys():
-                if user.name in people_to_user:
-                    people_to_user[user.name] += PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
+                if username in people_to_user:
+                    people_to_user[username] += PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
                 else:
-                    people_to_user[user.name] = 1 + PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
+                    people_to_user[username] = 1 + PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
         # create fields
         for field in old_embed.fields:
             if field.name in reaction_to_user.keys():
