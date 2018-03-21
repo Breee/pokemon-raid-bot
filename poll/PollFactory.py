@@ -1,4 +1,6 @@
 from poll.Poll import Poll
+from poll.MultiPoll import MultiPoll
+from poll.SinglePoll import SinglePoll
 import logging
 import discord
 logger = logging.getLogger('discord')
@@ -21,7 +23,7 @@ class PollFactory(object):
                 "We expect a dictionary oft the form: { poll_ID -> poll}" % (dict.__name__, polls))
         self.id_counter = len(self.polls)
 
-    def create_poll(self, poll_title, vote_options):
+    def create_multi_poll(self, poll_title, vote_options):
         """
         Function which creates a new Poll object and stores it in self.polls
         :param poll_title: String which denotes the title of a poll
@@ -29,12 +31,25 @@ class PollFactory(object):
         :return: void
         """
         # create a new Poll object.
-        new_poll = Poll(id=self.id_counter,poll_title=poll_title, vote_options=vote_options)
+        new_poll = MultiPoll(id=self.id_counter,poll_title=poll_title, vote_options=vote_options)
         self.add_poll(poll_id=self.id_counter, poll=new_poll)
         self.id_counter += 1
         return new_poll
 
-    def update_poll(self, poll_id, poll_title, vote_options):
+    def create_single_poll(self, poll_title):
+        """
+        Function which creates a new Poll object and stores it in self.polls
+        :param poll_title: String which denotes the title of a poll
+        :param vote_options: List of Strings which denote the vote options.
+        :return: void
+        """
+        # create a new Poll object.
+        new_poll = SinglePoll(id=self.id_counter, poll_title=poll_title)
+        self.add_poll(poll_id=self.id_counter, poll=new_poll)
+        self.id_counter += 1
+        return new_poll
+
+    def update_multi_poll(self, poll_id, poll_title, vote_options):
         """
         Function which updates an existing poll.
         :param poll_id: ID of the poll which shall be updated.
@@ -43,7 +58,7 @@ class PollFactory(object):
         :return: void.
         """
         old_poll = self.polls[poll_id]
-        assert isinstance(old_poll, Poll), "Object is no Poll object."
+        assert isinstance(old_poll, MultiPoll), "Object is no Poll object."
         old_poll.update_poll(poll_title, vote_options)
 
     def add_poll(self, poll_id, poll):
@@ -66,12 +81,3 @@ class PollFactory(object):
         :return: Poll object with the id "poll_id".
         """
         return self.polls[poll_id]
-
-
-
-
-
-
-
-
-

@@ -1,27 +1,29 @@
 import logging
+import pickle
+import os
 from storage.Storage import Storage
-from messages.MessageManager import MessageManager
-from storage.MessageStorage import MessageStorage
 logger = logging.getLogger('discord')
 
 
 class StorageManager(object):
     def __init__(self):
         self.storage = None
+        self.dump_file_name = "storage.pickle"
 
-    def create_storage(self, message_manager, poll_factory):
-        self.storage = Storage(message_storage=self.collect_messages(message_manager),
-                               polls=self.collect_polls(poll_factory))
+    def update_storage(self, message_manager, poll_factory,client_messages):
+        self.storage = Storage(message_manager=message_manager,
+                               poll_factory=poll_factory,
+                               client_messages=client_messages)
+        self.dump_storage()
 
-    def collect_messages(self, message_manager):
-        if isinstance(MessageManager, message_manager):
-            messages, pollmessage_id_to_storedmessage_id, triggermessage_id_to_storedmessage_id, pollmessage_id_to_poll_id = message_manager.get_data()
-            message_storage = MessageStorage(messages=messages,
-                                             pollmessage_id_to_storedmessage_id=pollmessage_id_to_storedmessage_id,
-                                             triggermessage_id_to_storedmessage_id=triggermessage_id_to_storedmessage_id,
-                                             pollmessage_id_to_poll_id=pollmessage_id_to_poll_id)
-            return message_storage
+    def dump_storage(self):
+        #with open(self.dump_file_name, 'wb') as dump:
+         #   pickle.dump(self.storage, dump, protocol=pickle.HIGHEST_PROTOCOL)
+        pass
 
-    def collect_polls(self, poll_factory):
-        return poll_factory.polls
+    def load_storage(self):
+        #if os.stat(self.dump_file_name).st_size != 0:
+        #    with open(self.dump_file_name, 'rb') as dump:
+        #        self.storage = pickle.load(dump)
+        pass
 

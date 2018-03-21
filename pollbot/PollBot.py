@@ -1,6 +1,10 @@
 from config.Configuration import Configuration
 from messages.MessageManager import MessageManager
+from storage.StorageManager import StorageManager
 from poll.PollFactory import PollFactory
+from poll.Poll import Poll
+from poll.MultiPoll import MultiPoll
+from poll.SinglePoll import SinglePoll
 from discord.ext import commands
 from discord.ext.commands import Context, CommandError, CommandNotFound
 from discord.ext.commands.view import StringView
@@ -18,6 +22,7 @@ class PollBot(commands.Bot):
     def __init__(self, prefix, description, config_file):
         super().__init__(command_prefix=prefix, description=description, pm_help=None, help_attrs=dict(hidden=True))
         self.config = Configuration(config_file)
+        self.storage_manager = StorageManager()
         self.poll_factory = PollFactory()
         self.message_manager = MessageManager()
         self.add_command(self.ping)
@@ -25,6 +30,25 @@ class PollBot(commands.Bot):
         self.add_command(self.uptime)
         self.session = aiohttp.ClientSession(loop=self.loop)
         self.start_time = 0
+
+        self.storage_manager.load_storage()
+        if self.storage_manager.storage is not None:
+            self.poll_factory = self.storage_manager.storage.poll_factory
+            self.message_manager = self.storage_manager.storage.message_manager
+            self.messages = self.storage_manager.storage.client_messages
+            print("POLLS: ")
+            for id, poll in self.poll_factory.polls.items():
+                print("POLL_ID: %d" % poll.poll_ID)
+                print("POLL_name: %s" % poll.poll_title)
+                print("POLL_reactions: %s" % poll.reactions)
+            print("\nMESSAGES: ")
+            for id, message in self.message_manager.messages.items():
+                print("MESSAGE_ID: %d " % id)
+                print("POLLMESSAGE_ID: %s" % message.poll_message.id)
+                print("POLL_ID: %d " % message.poll_id)
+            print("MESSAGES DEQUE:")
+            for message in self.messages:
+                print("MESSAGE_ID: %s " % message.id)
 
     async def on_ready(self):
         logger.info("Bot is ready.")
@@ -71,9 +95,10 @@ class PollBot(commands.Bot):
 
     @commands.command(pass_context=True)
     async def poll(self, ctx, poll_title, *vote_options):
-        await self.create_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
+        await self.create_multi_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
+        self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory, client_messages=self.messages)
 
-    async def create_poll(self, trigger_message, poll_title, vote_options):
+    async def create_multi_poll(self, trigger_message, poll_title, vote_options):
         """
         Function that creates a new poll and posts it.
         :param trigger_message: Message which triggered the creation of the poll
@@ -82,7 +107,7 @@ class PollBot(commands.Bot):
         :return:
         """
         # Create a new poll and post it.
-        poll = self.poll_factory.create_poll(poll_title=poll_title, vote_options=vote_options)
+        poll = self.poll_factory.create_multi_poll(poll_title=poll_title, vote_options=vote_options)
         poll_message = await self.send_message(trigger_message.channel,
                                                content="Created poll #%s.\n%s" % (poll.poll_ID, poll_title),
                                                embed=poll.embed)
@@ -102,10 +127,34 @@ class PollBot(commands.Bot):
         for emoji, n in sorted_people_emoji:
             await self.add_reaction(poll_message, emoji)
 
+    async def create_single_poll(self, trigger_message, poll_title):
+        """
+        Function that creates a new poll and posts it.
+        :param trigger_message: Message which triggered the creation of the poll
+        :param poll_title: Title of the poll
+        :param vote_options: List of string which contains vote options.
+        :return:
+        """
+        # Create a new poll and post it.
+        poll = self.poll_factory.create_single_poll(poll_title=poll_title)
+        poll.create_summary_message()
+        poll_message = await self.send_message(trigger_message.channel,
+                                               content=poll.summary_message)
+
+        self.message_manager.create_message(trigger_message=trigger_message,
+                                            poll_message=poll_message, poll_id=poll.poll_ID)
+
+        # add people emojie as reaction
+        sorted_people_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in
+                               sorted(EMOJI_TO_NUMBER, key=EMOJI_TO_NUMBER.get)]
+        for emoji, n in sorted_people_emoji:
+            if n < 4:
+                await self.add_reaction(poll_message, emoji)
+
     async def on_reaction_add(self, reaction, user):
         if user != self.user:
             # reaction has to be part of the vote emojis/ people emojis
-            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
+            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
                     # get poll
@@ -114,13 +163,19 @@ class PollBot(commands.Bot):
                     poll = self.poll_factory.polls[poll_id]
                     poll.reactions.append((reaction, user))
                     # edit poll
-                    poll.update_embed()
-                    # edit message
-                    await self.edit_msg(reaction.message, poll.embed)
+                    if isinstance(poll, MultiPoll):
+                        poll.update_embed()
+                        await self.edit_msg(reaction.message, poll.embed)
+                    elif isinstance(poll, SinglePoll):
+                        poll.create_summary_message()
+                        print(poll.summary_message)
+                        await self.edit_message(reaction.message, poll.summary_message)
+                    self.storage_manager.update_storage(message_manager=self.message_manager,
+                                                        poll_factory=self.poll_factory, client_messages=self.messages)
 
     async def on_reaction_remove(self, reaction, user):
         if user != self.user:
-            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER:
+            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
                     # get poll
@@ -129,9 +184,14 @@ class PollBot(commands.Bot):
                     poll = self.poll_factory.polls[poll_id]
                     poll.reactions.remove((reaction, user))
                     # edit poll
-                    poll.update_embed()
-                    # edit message
-                    await self.edit_msg(reaction.message, poll.embed)
+                    if isinstance(poll, MultiPoll):
+                        poll.update_embed()
+                        await self.edit_msg(reaction.message, poll.embed)
+                    elif isinstance(poll, SinglePoll):
+                        poll.create_summary_message()
+                        await self.edit_message(reaction.message, poll.summary_message)
+                    self.storage_manager.update_storage(message_manager=self.message_manager,
+                                                        poll_factory=self.poll_factory, client_messages=self.messages)
 
     async def on_message_delete(self, message):
         if isinstance(message, discord.Message):
@@ -142,6 +202,8 @@ class PollBot(commands.Bot):
                                               trigger_message=stored_message.trigger_message)
             # remove the message
             self.message_manager.delete_message(stored_message.id)
+            self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory,
+                                                client_messages=self.messages)
 
     async def delete_pollmessage(self, poll_message, trigger_message, post_notification=True):
         """
@@ -172,11 +234,20 @@ class PollBot(commands.Bot):
                 else:
                     await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
                                                   post_notification=True)
-
+                self.storage_manager.update_storage(message_manager=self.message_manager,
+                                                    poll_factory=self.poll_factory, client_messages=self.messages)
 
     def is_poll_command(self, message_content):
         poll_command = '%spoll' % self.command_prefix
         return message_content.startswith(poll_command)
+
+    async def on_message(self, message):
+        if message.content.lower().startswith("raid "):
+            if message.author != self.user:
+                await self.create_single_poll(trigger_message=message, poll_title=message.content)
+        else:
+            await super().on_message(message)
+
 
 
     @asyncio.coroutine

@@ -29,6 +29,7 @@ NUMBER_TO_EMOJI = {val : key for key, val in EMOJI_TO_NUMBER.items()}
 :regional_indicator_i:  \U0001F1EE
 :regional_indicator_j:  \U0001F1EF
 """
+
 LETTEREMOJI_TO_NUMBER = {
 '\U0001F1E6' : 0,
 '\U0001F1E7' : 1,
