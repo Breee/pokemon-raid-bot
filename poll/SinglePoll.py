@@ -5,6 +5,9 @@ logger = logging.getLogger('discord')
 
 
 class SinglePoll(Poll):
+    """
+     SinglePoll class, implements a poll with no vote options.
+    """
 
     def __init__(self, id, poll_title):
         super().__init__(id, poll_title)

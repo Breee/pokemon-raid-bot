@@ -7,6 +7,9 @@ import discord
 logger = logging.getLogger('discord')
 
 class MultiPoll(Poll):
+    """
+    MultiPoll class, implements a poll with multiple vote options.
+    """
 
     def __init__(self, id, poll_title, vote_options):
         super().__init__(id, poll_title)

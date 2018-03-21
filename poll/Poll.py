@@ -10,6 +10,9 @@ class PollCreationException(Exception):
 
 
 class Poll(object):
+    """
+    A Poll object, used as parent for SinglePoll and MultiPoll.
+    """
 
     def __init__(self, id, poll_title):
         self.poll_ID = id # some human readable id.
