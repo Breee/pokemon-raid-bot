@@ -176,7 +176,6 @@ class PollBot(commands.Bot):
                         await self.edit_msg(reaction.message, poll.embed)
                     elif isinstance(poll, SinglePoll):
                         poll.create_summary_message()
-                        print(poll.summary_message)
                         await self.edit_message(reaction.message, poll.summary_message)
                     self.storage_manager.update_storage(message_manager=self.message_manager,
                                                         poll_factory=self.poll_factory, client_messages=self.messages)
@@ -235,19 +234,30 @@ class PollBot(commands.Bot):
             stored_message = self.message_manager.get_message(trigger_message_id=before.id)
             if stored_message is not None:
                 pollmessage = stored_message.poll_message
-                if self.is_poll_command(after.content):
+                if self.is_multi_poll_command(after.content):
                     await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
                                                   post_notification=False)
                     await self.process_commands(after)
+                elif self.is_single_poll_command(after.content):
+                    # get poll
+                    poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage.id]
+                    poll = self.poll_factory.polls[poll_id]
+                    poll.poll_title = after.content
+                    poll.create_summary_message()
+                    await self.edit_message(pollmessage, poll.summary_message)
                 else:
                     await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
                                                   post_notification=True)
                 self.storage_manager.update_storage(message_manager=self.message_manager,
                                                     poll_factory=self.poll_factory, client_messages=self.messages)
 
-    def is_poll_command(self, message_content):
+    def is_multi_poll_command(self, message_content):
         poll_command = '%spoll' % self.command_prefix
         return message_content.startswith(poll_command)
+
+    def is_single_poll_command(self, message_content):
+        poll_command = 'raid '
+        return message_content.lower().startswith(poll_command)
 
     async def on_message(self, message):
         if message.content.lower().startswith("raid "):
