@@ -31,18 +31,20 @@ class SinglePoll(Poll):
                     people_to_user[username] = 1 + EMOJI_TO_NUMBER[reaction.emoji]
 
         msg = "Poll #%d\n" \
-              "%s\n" \
-              "----------------------------\n" \
-              "Raiders:\n" % (self.poll_ID,self.poll_title)
+              "***%s***\n" \
+              "\n" \
+              "__**Raiders:**__\n" % (self.poll_ID, self.poll_title.lstrip("raid "))
         counter = 0
         total = 0
         for user, amount in people_to_user.items():
             counter += 1
             total += amount
             if counter < len(people_to_user):
-                msg += " "
+                msg += ", "
             msg += "%s[%d]" % (user, amount)
-        msg += "\n----------------------------\n[Total Raiders: %d]" % total
+        msg += "\n" \
+               "\n" \
+               "__**Total Raiders: %d**__" % total
 
         self.summary_message = msg
 
