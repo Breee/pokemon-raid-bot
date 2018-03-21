@@ -16,7 +16,10 @@ import datetime
 import aiohttp
 import logging
 
-logger = logging.getLogger('discord')
+LOGGER = logging.getLogger('discord')
+with open('help_msg.txt', 'r') as helpfile:
+    HELP_MSG = helpfile.read()
+
 
 class PollBot(commands.Bot):
     def __init__(self, prefix, description, config_file):
@@ -28,7 +31,8 @@ class PollBot(commands.Bot):
         self.add_command(self.ping)
         self.add_command(self.poll)
         self.add_command(self.uptime)
-        self.session = aiohttp.ClientSession(loop=self.loop)
+        self.remove_command("help")
+        self.add_command(self.help)
         self.start_time = 0
 
         self.storage_manager.load_storage()
@@ -51,7 +55,7 @@ class PollBot(commands.Bot):
                 print("MESSAGE_ID: %s " % message.id)
 
     async def on_ready(self):
-        logger.info("Bot is ready.")
+        LOGGER.info("Bot is ready.")
         self.start_time = datetime.datetime.utcnow()
         global PEOPLE_EMOJI_TO_NUMBER
         server_emojis = self.get_all_emojis()
@@ -92,6 +96,10 @@ class PollBot(commands.Bot):
     @commands.command(hidden=True)
     async def uptime(self):
         await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
+
+    @commands.command()
+    async def help(self):
+        await self.say(HELP_MSG)
 
     @commands.command(pass_context=True)
     async def poll(self, ctx, poll_title, *vote_options):
