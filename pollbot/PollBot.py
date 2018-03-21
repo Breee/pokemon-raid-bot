@@ -108,7 +108,7 @@ class PollBot(commands.Bot):
 
     async def create_multi_poll(self, trigger_message, poll_title, vote_options):
         """
-        Function that creates a new poll and posts it.
+        Function that creates a new MultiPoll and posts it.
         :param trigger_message: Message which triggered the creation of the poll
         :param poll_title: Title of the poll
         :param vote_options: List of string which contains vote options.
@@ -137,10 +137,9 @@ class PollBot(commands.Bot):
 
     async def create_single_poll(self, trigger_message, poll_title):
         """
-        Function that creates a new poll and posts it.
+        Function that creates a new Singlepoll and posts it.
         :param trigger_message: Message which triggered the creation of the poll
         :param poll_title: Title of the poll
-        :param vote_options: List of string which contains vote options.
         :return:
         """
         # Create a new poll and post it.
@@ -160,6 +159,12 @@ class PollBot(commands.Bot):
                 await self.add_reaction(poll_message, emoji)
 
     async def on_reaction_add(self, reaction, user):
+        """
+        Function which handles reactions added by users, used to update existing polls.
+        :param reaction: reaction message.
+        :param user: user which added a reaction.
+        :return:
+        """
         if user != self.user:
             # reaction has to be part of the vote emojis/ people emojis
             if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
@@ -181,6 +186,12 @@ class PollBot(commands.Bot):
                                                         poll_factory=self.poll_factory, client_messages=self.messages)
 
     async def on_reaction_remove(self, reaction, user):
+        """
+        Function which handles reactions removed by users, used to update existing polls.
+        :param reaction: reaction message.
+        :param user: user which added a reaction.
+        :return:
+        """
         if user != self.user:
             if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
@@ -201,6 +212,11 @@ class PollBot(commands.Bot):
                                                         poll_factory=self.poll_factory, client_messages=self.messages)
 
     async def on_message_delete(self, message):
+        """
+        Function which handles messages that have been deleted.
+        :param message: deleted message.
+        :return:
+        """
         if isinstance(message, discord.Message):
             # get the stored message!
             stored_message = self.message_manager.get_message(trigger_message_id=message.id)
@@ -230,6 +246,12 @@ class PollBot(commands.Bot):
             await self.send_message(trigger_message.channel, content="Deleted poll #%s: %s" % (poll.poll_ID, poll.poll_title))
 
     async def on_message_edit(self, before, after):
+        """
+        Fucntion which handles the editing of messages.
+        :param before: message before edit
+        :param after: message after edit
+        :return:
+        """
         if before.content is not after.content:
             stored_message = self.message_manager.get_message(trigger_message_id=before.id)
             if stored_message is not None:
@@ -252,14 +274,31 @@ class PollBot(commands.Bot):
                                                     poll_factory=self.poll_factory, client_messages=self.messages)
 
     def is_multi_poll_command(self, message_content):
+        """
+        Function which checks whether a message is a command that triggers the creation of a MultiPoll object.
+        :param message_content: content of a discord message (a string)
+        :return:
+        """
         poll_command = '%spoll' % self.command_prefix
         return message_content.startswith(poll_command)
 
     def is_single_poll_command(self, message_content):
+        """
+        Function which checks whether a message is a command that triggers the creation of a SinglePoll object.
+        :param message_content: content of a discord message (a string)
+        :return:
+        """
         poll_command = 'raid '
         return message_content.lower().startswith(poll_command)
 
     async def on_message(self, message):
+        """
+        Function which handles posted messages by anyone.
+        Used to check whether a message triggers the creation of a SinglePoll object.
+        Falls back to the parent method of commands.Bot if not.
+        :param message: posted message
+        :return:
+        """
         if message.content.lower().startswith("raid "):
             if message.author != self.user:
                 await self.create_single_poll(trigger_message=message, poll_title=message.content)
