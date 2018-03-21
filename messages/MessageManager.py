@@ -25,7 +25,7 @@ class MessageManager(object):
         self.pollmessage_ID_to_StoredMessage_ID[poll_message.id] = self.id_counter
         self.triggermessage_ID_to_StoredMessage_ID[trigger_message.id] = self.id_counter
 
-        stored_message = StoredMessage(message_id=self.id_counter,
+        stored_message = StoredMessage(id=self.id_counter,
                                        trigger_message=trigger_message,
                                        poll_message=poll_message,
                                        poll_id=poll_id)
@@ -46,7 +46,7 @@ class MessageManager(object):
 
     def add_message(self, message):
         if isinstance(message, StoredMessage):
-            self.messages[message.message_id] = message
+            self.messages[message.id] = message
         else:
             raise TypeError("parameter message is not of type %s but %s" % (StoredMessage.__name__, message.__class__))
 

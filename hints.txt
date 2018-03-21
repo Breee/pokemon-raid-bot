@@ -1,0 +1,6 @@
+Hint: If you want a poll for a specific time, post ***raid <Boss + Arena + Time>***
+Hint: If you want a poll with multiple options, post ***!raid-poll "<poll_titel>" <option_1> <option_2>***
+Hint: Polls can be edited, by editing the message which created the poll!
+Hint: Polls can be deleted, by deleting the message which created the poll!
+Hint: If a poll with multiple options is edited, I will delete the old one and post a new one!
+Hint: If a poll for a specific time is edited, I will just edit the title and keep the current voting!

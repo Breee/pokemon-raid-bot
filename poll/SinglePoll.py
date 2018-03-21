@@ -1,7 +1,6 @@
 from poll.emoji_storage import *
-from poll.Poll import Poll,PollCreationException
+from poll.Poll import Poll, PollCreationException
 import logging
-import time
 logger = logging.getLogger('discord')
 
 

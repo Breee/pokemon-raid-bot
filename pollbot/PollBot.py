@@ -207,9 +207,9 @@ class PollBot(commands.Bot):
             if stored_message is not None:
                 await self.delete_pollmessage(poll_message=stored_message.poll_message,
                                               trigger_message=stored_message.trigger_message)
-            # remove the message
-            self.message_manager.delete_message(stored_message.id)
-            self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory,
+                # remove the message
+                self.message_manager.delete_message(stored_message.id)
+                self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory,
                                                 client_messages=self.messages)
 
     async def delete_pollmessage(self, poll_message, trigger_message, post_notification=True):

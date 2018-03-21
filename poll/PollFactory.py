@@ -25,7 +25,7 @@ class PollFactory(object):
 
     def create_multi_poll(self, poll_title, vote_options):
         """
-        Function which creates a new Poll object and stores it in self.polls
+        Function which creates a new MultiPoll object and stores it in self.polls
         :param poll_title: String which denotes the title of a poll
         :param vote_options: List of Strings which denote the vote options.
         :return: void
@@ -38,7 +38,7 @@ class PollFactory(object):
 
     def create_single_poll(self, poll_title):
         """
-        Function which creates a new Poll object and stores it in self.polls
+        Function which creates a new SinglePoll object and stores it in self.polls
         :param poll_title: String which denotes the title of a poll
         :param vote_options: List of Strings which denote the vote options.
         :return: void
@@ -51,7 +51,7 @@ class PollFactory(object):
 
     def update_multi_poll(self, poll_id, poll_title, vote_options):
         """
-        Function which updates an existing poll.
+        Function which updates an existing MultiPoll.
         :param poll_id: ID of the poll which shall be updated.
         :param poll_title: String which denotes the title of a poll
         :param vote_options: List of Strings which denote the vote options.
