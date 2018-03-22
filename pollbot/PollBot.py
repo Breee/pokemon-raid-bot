@@ -59,18 +59,7 @@ class PollBot(commands.Bot):
            PEOPLE_EMOJI_TO_NUMBER = DEFAULT_PEOPLE_EMOJI_TO_NUMBER
 
         await self.change_presence(game=discord.Game(name=self.config.playing))
-        self.storage_manager.load_storage()
-        if self.storage_manager.storage is not None:
-            self.poll_factory = self.storage_manager.storage.poll_factory
-            self.message_manager = self.storage_manager.storage.message_manager
-            self.messages = self.storage_manager.storage.client_messages
-            LOGGER.info("Updating Polls.")
-            for message in self.message_manager.messages.values():
-                current_state = await self.get_message(message.poll_message.channel, message.poll_message.id)
-                await self.update_poll_after_restart(current_state.id, current_state.reactions)
-            LOGGER.info("Polls Updated.")
-            self.storage_manager.update_storage(message_manager=self.message_manager,
-                                                poll_factory=self.poll_factory, client_messages=self.messages)
+        await self.restore_messages_and_polls()
 
     def run(self):
         super().run(self.config.token, reconnect=True)
@@ -401,5 +390,32 @@ class PollBot(commands.Bot):
 
     async def edit_msg(self, message, embed):
         await self.edit_message(message, message.content, embed=embed)
+
+    async def restore_messages_and_polls(self):
+        self.storage_manager.load_storage()
+        if self.storage_manager.storage is not None:
+
+            # restore polls
+            self.poll_factory.polls = self.storage_manager.storage.polls
+
+            # restore message_manager
+            message_storage = self.storage_manager.storage.message_storage
+            self.message_manager.messages = message_storage.stored_messages
+            self.message_manager.pollmessage_id_to_storedmessage_id = message_storage.pollmessage_id_to_storedmessage_id
+            self.message_manager.triggermessage_id_to_storedmessage_id = message_storage.triggermessage_id_to_storedmessage_id
+            self.message_manager.pollmessage_id_to_poll_id = message_storage.pollmessage_id_to_poll_id
+
+            # restore old discord messages
+            self.messages = self.storage_manager.storage.client_messages
+
+            LOGGER.info("Updating Polls.")
+
+            for message in self.message_manager.messages.values():
+                current_state = await self.get_message(message.poll_message.channel, message.poll_message.id)
+                await self.update_poll_after_restart(current_state.id, current_state.reactions)
+
+            LOGGER.info("Polls Updated.")
+            self.storage_manager.update_storage(message_manager=self.message_manager,
+                                                poll_factory=self.poll_factory, client_messages=self.messages)
 
 

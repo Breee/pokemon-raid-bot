@@ -10,7 +10,7 @@ class StorageManager(object):
         self.storage = None
         self.dump_file_name = "storage.pickle"
 
-    def update_storage(self, message_manager, poll_factory,client_messages):
+    def update_storage(self, message_manager, poll_factory, client_messages):
         self.storage = Storage(message_manager=message_manager,
                                poll_factory=poll_factory,
                                client_messages=client_messages)
