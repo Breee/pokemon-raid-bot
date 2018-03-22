@@ -396,14 +396,11 @@ class PollBot(commands.Bot):
         if self.storage_manager.storage is not None:
 
             # restore polls
-            self.poll_factory.restore_polls(self.storage_manager.storage.polls)
+            self.poll_factory.restore_polls(polls=self.storage_manager.storage.polls)
 
             # restore message_manager data
             message_storage = self.storage_manager.storage.message_storage
-            self.message_manager.messages = message_storage.stored_messages
-            self.message_manager.pollmessage_id_to_storedmessage_id = message_storage.pollmessage_id_to_storedmessage_id
-            self.message_manager.triggermessage_id_to_storedmessage_id = message_storage.triggermessage_id_to_storedmessage_id
-            self.message_manager.pollmessage_id_to_poll_id = message_storage.pollmessage_id_to_poll_id
+            self.message_manager.restore_messages(message_storage=message_storage)
 
             # restore old discord messages
             self.messages = self.storage_manager.storage.client_messages

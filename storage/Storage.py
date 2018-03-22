@@ -1,5 +1,4 @@
 import logging
-import sqlite3
 from storage.MessageStorage import MessageStorage
 logger = logging.getLogger('discord')
 

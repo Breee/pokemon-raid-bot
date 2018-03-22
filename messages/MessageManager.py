@@ -56,11 +56,23 @@ class MessageManager(object):
     def update_message(self, message_id, trigger_message, poll_message, poll_id):
         pass
 
+    def get_pollmessage(self, poll_id):
+        for poll_msg, id in self.pollmessage_id_to_poll_id:
+            if poll_id == id:
+                return poll_msg
+
     def get_data(self):
         return self.messages, \
                self.pollmessage_id_to_storedmessage_id, \
                self.triggermessage_id_to_storedmessage_id, \
                self.pollmessage_id_to_poll_id
+
+    def restore_messages(self, message_storage):
+        self.messages = message_storage.stored_messages
+        self.pollmessage_id_to_storedmessage_id = message_storage.pollmessage_id_to_storedmessage_id
+        self.triggermessage_id_to_storedmessage_id = \
+            message_storage.triggermessage_id_to_storedmessage_id
+        self.pollmessage_id_to_poll_id = message_storage.pollmessage_id_to_poll_id
 
 
 
