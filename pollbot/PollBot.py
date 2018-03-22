@@ -261,12 +261,17 @@ class PollBot(commands.Bot):
                                                   post_notification=False)
                     await self.process_commands(after)
                 elif self.is_single_poll_command(after.content):
-                    # get poll
-                    poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage.id]
-                    poll = self.poll_factory.polls[poll_id]
-                    poll.poll_title = after.content
-                    poll.create_summary_message()
-                    await self.edit_message(pollmessage, poll.summary_message)
+                    if self.is_multi_poll_command(before.content):
+                        await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
+                                                      post_notification=False)
+                        await self.create_single_poll(trigger_message=after, poll_title=after.content)
+                    else:
+                        # get poll
+                        poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage.id]
+                        poll = self.poll_factory.polls[poll_id]
+                        poll.poll_title = after.content
+                        poll.create_summary_message()
+                        await self.edit_message(pollmessage, poll.summary_message)
                 else:
                     await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
                                                   post_notification=True)
