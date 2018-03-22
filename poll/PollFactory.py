@@ -81,3 +81,7 @@ class PollFactory(object):
         :return: Poll object with the id "poll_id".
         """
         return self.polls[poll_id]
+
+    def restore_polls(self, polls):
+        self.polls = polls
+        self.id_counter = len(polls)
