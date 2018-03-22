@@ -35,25 +35,6 @@ class PollBot(commands.Bot):
         self.add_command(self.help)
         self.start_time = 0
 
-        self.storage_manager.load_storage()
-        if self.storage_manager.storage is not None:
-            self.poll_factory = self.storage_manager.storage.poll_factory
-            self.message_manager = self.storage_manager.storage.message_manager
-            self.messages = self.storage_manager.storage.client_messages
-            print("POLLS: ")
-            for id, poll in self.poll_factory.polls.items():
-                print("POLL_ID: %d" % poll.poll_ID)
-                print("POLL_name: %s" % poll.poll_title)
-                print("POLL_reactions: %s" % poll.reactions)
-            print("\nMESSAGES: ")
-            for id, message in self.message_manager.messages.items():
-                print("MESSAGE_ID: %d " % id)
-                print("POLLMESSAGE_ID: %s" % message.poll_message.id)
-                print("POLL_ID: %d " % message.poll_id)
-            print("MESSAGES DEQUE:")
-            for message in self.messages:
-                print("MESSAGE_ID: %s " % message.id)
-
     async def on_ready(self):
         LOGGER.info("Bot is ready.")
         self.start_time = datetime.datetime.utcnow()
@@ -78,9 +59,21 @@ class PollBot(commands.Bot):
            PEOPLE_EMOJI_TO_NUMBER = DEFAULT_PEOPLE_EMOJI_TO_NUMBER
 
         await self.change_presence(game=discord.Game(name=self.config.playing))
+        self.storage_manager.load_storage()
+        if self.storage_manager.storage is not None:
+            self.poll_factory = self.storage_manager.storage.poll_factory
+            self.message_manager = self.storage_manager.storage.message_manager
+            self.messages = self.storage_manager.storage.client_messages
+            LOGGER.info("Updating Polls.")
+            for message in self.message_manager.messages.values():
+                current_state = await self.get_message(message.poll_message.channel, message.poll_message.id)
+                await self.update_poll_after_restart(current_state.id, current_state.reactions)
+            LOGGER.info("Polls Updated.")
+            self.storage_manager.update_storage(message_manager=self.message_manager,
+                                                poll_factory=self.poll_factory, client_messages=self.messages)
 
     def run(self):
-        super().run(self.config.token)
+        super().run(self.config.token, reconnect=True)
 
     async def close(self):
         await super().close()
@@ -226,7 +219,7 @@ class PollBot(commands.Bot):
                 # remove the message
                 self.message_manager.delete_message(stored_message.id)
                 self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory,
-                                                client_messages=self.messages)
+                                                    client_messages=self.messages)
 
     async def delete_pollmessage(self, poll_message, trigger_message, post_notification=True):
         """
@@ -278,6 +271,35 @@ class PollBot(commands.Bot):
                 self.storage_manager.update_storage(message_manager=self.message_manager,
                                                     poll_factory=self.poll_factory, client_messages=self.messages)
 
+    async def update_poll_after_restart(self, pollmessage_id, reactions):
+        """
+        Function which is used to update polls after a restart of the bot,
+        The function will read the reactions of a poll message and update the poll accordingly,
+        this enables voting, even if the bot is offline.
+        :param pollmessage_id: id of the pollmessage, which shall be updated
+        :param reactions: reactions of the pollmessage.
+        :return:
+        """
+        stored_message = self.message_manager.get_message(poll_message_id=pollmessage_id)
+        if stored_message:
+            # get poll
+            poll_id = self.message_manager.pollmessage_id_to_poll_id[pollmessage_id]
+            poll = self.poll_factory.polls[poll_id]
+            # add reactions
+            poll.reactions = []
+            for reaction in reactions:
+                users = await self.get_reaction_users(reaction)
+                for user in users:
+                    if self.user != user:
+                        poll.reactions.append((reaction, user))
+            # edit poll
+            if isinstance(poll, MultiPoll):
+                poll.update_embed()
+                await self.edit_msg(stored_message.poll_message, poll.embed)
+            elif isinstance(poll, SinglePoll):
+                poll.create_summary_message()
+                await self.edit_message(stored_message.poll_message, poll.summary_message)
+
     def is_multi_poll_command(self, message_content):
         """
         Function which checks whether a message is a command that triggers the creation of a MultiPoll object.
@@ -309,8 +331,6 @@ class PollBot(commands.Bot):
                 await self.create_single_poll(trigger_message=message, poll_title=message.content)
         else:
             await super().on_message(message)
-
-
 
     @asyncio.coroutine
     def process_commands(self, message):
@@ -381,3 +401,5 @@ class PollBot(commands.Bot):
 
     async def edit_msg(self, message, embed):
         await self.edit_message(message, message.content, embed=embed)
+
+
