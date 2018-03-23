@@ -32,10 +32,9 @@ class SinglePoll(Poll):
                 else:
                     people_to_user[username] = 1 + EMOJI_TO_NUMBER[reaction.emoji]
 
-        msg = "Poll #%d\n" \
-              "***%s***\n" \
+        msg = "***%s***\n" \
               "\n" \
-              "__**Raiders:**__\n" % (self.poll_ID, self.poll_title.lstrip("raid "))
+              "__**Raiders:**__\n" % (self.poll_title.lstrip("raid "))
         counter = 0
         total = 0
         for user, amount in people_to_user.items():

@@ -22,7 +22,6 @@ class MultiPoll(Poll):
         self.embed = self.create_embed(vote_options=vote_options) # embed to represent the poll.
         self.original_embed = self.create_embed(vote_options=vote_options) # embed to represent the poll.
 
-
     def create_embed(self, vote_options):
         """
         Function which shall create a new embed and store it in self.embed.
