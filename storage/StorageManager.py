@@ -24,9 +24,10 @@ class StorageManager(object):
 
     def load_storage(self):
         LOGGER.info("Loading Storage from %s" % self.dump_file_name)
-        if os.stat(self.dump_file_name).st_size != 0:
-            with open(self.dump_file_name, 'rb') as dump:
-                self.storage = pickle.load(dump)
-                LOGGER.info("Loading Storage was successful.")
+        if os.path.isfile(self.dump_file_name):
+            if os.stat(self.dump_file_name).st_size != 0:
+                with open(self.dump_file_name, 'rb') as dump:
+                    self.storage = pickle.load(dump)
+                    LOGGER.info("Loading Storage was successful.")
 
 
