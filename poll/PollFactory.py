@@ -49,17 +49,6 @@ class PollFactory(object):
         self.id_counter += 1
         return new_poll
 
-    def update_multi_poll(self, poll_id, poll_title, vote_options):
-        """
-        Function which updates an existing MultiPoll.
-        :param poll_id: ID of the poll which shall be updated.
-        :param poll_title: String which denotes the title of a poll
-        :param vote_options: List of Strings which denote the vote options.
-        :return: void.
-        """
-        old_poll = self.polls[poll_id]
-        assert isinstance(old_poll, MultiPoll), "Object is no Poll object."
-        old_poll.update_poll(poll_title, vote_options)
 
     def add_poll(self, poll_id, poll):
         """
