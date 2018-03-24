@@ -34,6 +34,7 @@ class PollBot(commands.Bot):
         self.remove_command("help")
         self.add_command(self.help)
         self.start_time = 0
+        self.session = aiohttp.ClientSession(loop=self.loop)
 
     async def on_ready(self):
         LOGGER.info("Bot is ready.")
