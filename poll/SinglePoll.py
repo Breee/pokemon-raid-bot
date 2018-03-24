@@ -40,9 +40,9 @@ class SinglePoll(Poll):
         for user, amount in people_to_user.items():
             counter += 1
             total += amount
+            msg += "%s[%d]" % (user, amount)
             if counter < len(people_to_user):
                 msg += ", "
-            msg += "%s[%d]" % (user, amount)
         msg += "\n" \
                "\n" \
                "__**Total Raiders: %d**__" % total
