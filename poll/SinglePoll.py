@@ -34,7 +34,7 @@ class SinglePoll(Poll):
 
         msg = "***%s***\n" \
               "\n" \
-              "__**Raiders:**__\n" % (self.poll_title.lstrip("raid "))
+              "__**Raiders:**__\n" % (self.poll_title)
         counter = 0
         total = 0
         for user, amount in people_to_user.items():
