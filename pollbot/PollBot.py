@@ -205,17 +205,19 @@ class PollBot(commands.Bot):
             stored_message = self.message_manager.get_message(trigger_message_id=message.id)
             if stored_message is not None:
                 await self.delete_pollmessage(poll_message=stored_message.poll_message,
-                                              trigger_message=stored_message.trigger_message)
-                # remove the message
-                self.message_manager.delete_message(stored_message.id)
-                self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory,
-                                                    client_messages=self.messages)
+                                              trigger_message=stored_message.trigger_message,
+                                              stored_message=stored_message,
+                                              update_storage=True)
 
-    async def delete_pollmessage(self, poll_message, trigger_message, post_notification=True):
+    async def delete_pollmessage(self, poll_message, trigger_message,
+                                 stored_message=None,
+                                 post_notification=True,
+                                 update_storage=False):
         """
         Fucntion which deletes a pollmessage
         :param poll_message: message which contains the poll.
         :param trigger_message: message which triggered the creation of the poll.
+        :param stored_message: StoredMessage object.
         :param post_notification: Boolean which determines whether a notification about the deletion gets posted or not.
         :return:
 
@@ -225,8 +227,17 @@ class PollBot(commands.Bot):
         # add reactions
         poll = self.poll_factory.polls[poll_id]
         await self.delete_message(poll_message)
+
         if post_notification:
-            await self.send_message(trigger_message.channel, content="Deleted poll #%s: %s" % (poll.poll_ID, poll.poll_title))
+            await self.send_message(trigger_message.channel,
+                                    content="Deleted poll #%s: %s" % (poll.poll_ID, poll.poll_title))
+        # remove the message
+        if stored_message:
+            self.message_manager.delete_message(stored_message.id)
+        if update_storage:
+            self.storage_manager.update_storage(message_manager=self.message_manager,
+                                                poll_factory=self.poll_factory,
+                                                client_messages=self.messages)
 
     async def on_message_edit(self, before, after):
         """
@@ -395,7 +406,6 @@ class PollBot(commands.Bot):
     async def restore_messages_and_polls(self):
         self.storage_manager.load_storage()
         if self.storage_manager.storage is not None:
-
             # restore polls
             self.poll_factory.restore_polls(polls=self.storage_manager.storage.polls)
 
@@ -406,15 +416,50 @@ class PollBot(commands.Bot):
             # restore old discord messages
             self.messages = self.storage_manager.storage.client_messages
 
+            outdated_messages = []
             LOGGER.info("Updating Polls.")
-
             for message in self.message_manager.messages.values():
-                try:
-                    current_state = await self.get_message(message.poll_message.channel, message.poll_message.id)
-                    await self.update_poll_after_restart(current_state.id, current_state.reactions)
-                except discord.NotFound as err:
-                    LOGGER.warning("discord.NotFound error: {0}".format(err))
-
+                # Check if triggermessage exists.
+                trigger_message = await self.get_message_if_exists(channel=message.trigger_message.channel,
+                                                                   msg_id=message.trigger_message.id)
+                # Check if poll exists.
+                poll_message = await self.get_message_if_exists(channel=message.poll_message.channel,
+                                                                msg_id=message.poll_message.id)
+                # Case 1: triggermessage + poll exists. ---> Update polls.
+                # Case 2: triggermessage exists, poll exists not. ---> process triggermessage, remove stored message
+                # Case 3: triggermessage does not exist, poll exists. ---> delete poll, remove stored message.
+                # Case 4: triggermessage + poll do not exist anymore ---> remove stored message,
+                if trigger_message and poll_message:
+                    await self.update_poll_after_restart(poll_message.id, poll_message.reactions)
+                elif trigger_message and poll_message is None:
+                    LOGGER.info("poll for trigger_message does not exist anymore,"
+                                " processing trigger_message with content '%s'" % trigger_message.content)
+                    await self.process_commands(trigger_message)
+                    outdated_messages.append(message.id)
+                elif trigger_message is None and poll_message:
+                    LOGGER.info("trigger_message with content '%s' does not exist anymore, "
+                                "deleting poll." % message.trigger_message.content)
+                    await self.delete_pollmessage(poll_message=poll_message,
+                                                  trigger_message=message.trigger_message,
+                                                  post_notification=True,
+                                                  update_storage=True)
+                    outdated_messages.append(message.id)
+                elif trigger_message is None and poll_message is None:
+                    LOGGER.info("trigger_message and poll do not exist anymore, deleting message.")
+                    outdated_messages.append(message.id)
             LOGGER.info("Polls Updated.")
+
+            # delete outdated messages
+            for message_id in outdated_messages:
+                self.message_manager.delete_message(message_id=message_id)
+
             self.storage_manager.update_storage(message_manager=self.message_manager,
                                                 poll_factory=self.poll_factory, client_messages=self.messages)
+
+    async def get_message_if_exists(self, channel, msg_id):
+        try:
+            message = await self.get_message(channel=channel, id=msg_id)
+            return message
+        except discord.NotFound:
+            return None
+
