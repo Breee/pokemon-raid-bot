@@ -409,11 +409,12 @@ class PollBot(commands.Bot):
             LOGGER.info("Updating Polls.")
 
             for message in self.message_manager.messages.values():
-                current_state = await self.get_message(message.poll_message.channel, message.poll_message.id)
-                await self.update_poll_after_restart(current_state.id, current_state.reactions)
+                try:
+                    current_state = await self.get_message(message.poll_message.channel, message.poll_message.id)
+                    await self.update_poll_after_restart(current_state.id, current_state.reactions)
+                except discord.NotFound as err:
+                    LOGGER.warning("discord.NotFound error: {0}".format(err))
 
             LOGGER.info("Polls Updated.")
             self.storage_manager.update_storage(message_manager=self.message_manager,
                                                 poll_factory=self.poll_factory, client_messages=self.messages)
-
-
