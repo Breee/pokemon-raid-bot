@@ -15,11 +15,18 @@ import discord
 import datetime
 import aiohttp
 import logging
+import os
 
 LOGGER = logging.getLogger('discord')
-with open('help_msg.txt', 'r') as helpfile:
-    HELP_MSG = helpfile.read()
+if os.path.isfile('help_msg.txt'):
+    with open('help_msg.txt', 'r') as helpfile:
+        HELP_MSG = helpfile.read()
 
+BANNED_USERS = []
+if os.path.isfile('banned_users.txt'):
+    with open('banned_users.txt', 'r') as banned_users:
+        for line in banned_users:
+            BANNED_USERS.append(line)
 
 class PollBot(commands.Bot):
     def __init__(self, prefix, description, config_file):
@@ -86,6 +93,9 @@ class PollBot(commands.Bot):
 
     @commands.command(pass_context=True)
     async def poll(self, ctx, poll_title, *vote_options):
+        if str(ctx.message.author) in BANNED_USERS:
+            LOGGER.warning("Denied creation of poll, User %s is banned" % ctx.message.author)
+            return
         await self.create_multi_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
         self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory, client_messages=self.messages)
 
@@ -149,6 +159,9 @@ class PollBot(commands.Bot):
         :return:
         """
         if user != self.user:
+            if str(user) in BANNED_USERS:
+                LOGGER.warning("Denied reaction, User %s is banned" % user)
+                return
             # reaction has to be part of the vote emojis/ people emojis
             if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
@@ -176,6 +189,9 @@ class PollBot(commands.Bot):
         :return:
         """
         if user != self.user:
+            if str(user) in BANNED_USERS:
+                LOGGER.warning("Denied reaction, User %s is banned" % user)
+                return
             if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
