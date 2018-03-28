@@ -268,12 +268,12 @@ class PollBot(commands.Bot):
                 pollmessage = stored_message.poll_message
                 if self.is_multi_poll_command(after.content):
                     await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
-                                                  post_notification=False)
+                                                  post_notification=False,stored_message=stored_message)
                     await self.process_commands(after)
                 elif self.is_single_poll_command(after.content):
                     if self.is_multi_poll_command(before.content):
                         await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
-                                                      post_notification=False)
+                                                      post_notification=False,stored_message=stored_message)
                         await self.create_single_poll(trigger_message=after, poll_title=after.content)
                     else:
                         # get poll
@@ -284,7 +284,7 @@ class PollBot(commands.Bot):
                         await self.edit_message(pollmessage, poll.summary_message)
                 else:
                     await self.delete_pollmessage(poll_message=pollmessage, trigger_message=after,
-                                                  post_notification=True)
+                                                  post_notification=True, stored_message=stored_message)
                 self.storage_manager.update_storage(message_manager=self.message_manager,
                                                     poll_factory=self.poll_factory, client_messages=self.messages)
 
