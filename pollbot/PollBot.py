@@ -115,7 +115,7 @@ class PollBot(commands.Bot):
         # Create a new poll and post it.
         poll = self.poll_factory.create_multi_poll(poll_title=poll_title, vote_options=vote_options)
         poll_message = await self.send_message(trigger_message.channel,
-                                               content="Poll for ***%s***" % (poll_title),
+                                               content="Poll for **%s**" % (poll_title),
                                                embed=poll.embed)
 
         self.message_manager.create_message(trigger_message=trigger_message,

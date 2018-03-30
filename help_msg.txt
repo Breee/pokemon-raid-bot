@@ -1,3 +1,5 @@
+__**Erstellen von Polls (Umfragen)**__
+
 Um einen poll für eine spezifische Zeit zu erstellen, geht man wie folgt vor:
 ```
 raid <Boss + Arena + Zeit>
@@ -23,5 +25,14 @@ Falsch:
 Richtig:
 !raid-poll "Sind polls einfach?" "Ja schon" "Nein garnicht" "Ich mag Toastbrot"
 ```
+
+__**Editieren von Polls**__
+
+Um einen Poll zu editieren, editiert man einfach die Nachricht, mit der man den Poll erstellt hat.
+
+
+__**Löschen von Polls**__
+
+Um einen Poll zu löschen, löscht man einfach die Nachricht, mit der man den Poll erstellt hat.
 
 Frohes raiden! :heart:
