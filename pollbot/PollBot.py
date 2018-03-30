@@ -87,9 +87,12 @@ class PollBot(commands.Bot):
     async def uptime(self):
         await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
 
-    @commands.command()
-    async def help(self):
-        await self.say(HELP_MSG)
+    @commands.command(pass_context=True)
+    async def help(self, ctx, here=None):
+        if not here:
+            await self.send_message(destination=ctx.message.author, content=HELP_MSG)
+        else:
+            await self.say(HELP_MSG)
 
     @commands.command(pass_context=True)
     async def poll(self, ctx, poll_title, *vote_options):
