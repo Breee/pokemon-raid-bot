@@ -1,4 +1,4 @@
-Um einen poll für eine spezifische Zeit zu planen, geht man wie folgt vor:
+Um einen poll für eine spezifische Zeit zu erstellen, geht man wie folgt vor:
 ```
 raid <Boss + Arena + Zeit>
 Beispiel:
@@ -10,18 +10,18 @@ Um einen Poll zu erstellen, bei dem man mehrere Zeiten zur verfügung stellt, ge
 !raid-poll "<poll_titel>" <option_1> <option_2> ...
 
 Beispiel:
-  !raid-poll "Rayquaza Jump & Twist" 9:00 9:15 9:30 9:40
+!raid-poll "Rayquaza Jump & Twist" 9:00 9:15 9:30 9:40
 ```
 Bei mir ist zu beachten, dass man jedes Argument, dass Leerzeichen enthält in Anführungszeichen " setzt.
 ```
 Richtig:
-  !raid-poll "Rayquaza Jump & Twist" 9:00 9:15 9:30 9:40
+!raid-poll "Rayquaza Jump & Twist" 9:00 9:15 9:30 9:40
 
 Falsch:
-  !raid-poll Rayquaza Jump & Twist 9:00 9:15 9:30 9:40
+!raid-poll Rayquaza Jump & Twist 9:00 9:15 9:30 9:40
 
 Richtig:
-  !raid-poll "Sind polls einfach?" "Ja schon" "Nein garnicht" "Ich mag Toastbrot"
+!raid-poll "Sind polls einfach?" "Ja schon" "Nein garnicht" "Ich mag Toastbrot"
 ```
 
 Frohes raiden! :heart:
