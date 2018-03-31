@@ -1,6 +1,6 @@
 from messages.StoredMessage import StoredMessage
 import logging
-logger = logging.getLogger('discord')
+LOGGER = logging.getLogger('discord')
 
 
 class MessageManager(object):
@@ -21,6 +21,10 @@ class MessageManager(object):
         self.id_counter = len(self.messages)
 
     def create_message(self, trigger_message, poll_message, poll_id):
+        LOGGER.info("Creating StoredMessage.\n"
+                    "trigger_message: %s,\n"
+                    "poll_title: %s,\n"
+                    "poll_id: %s" % (trigger_message.content, poll_message.content, poll_id))
         self.pollmessage_id_to_poll_id[poll_message.id] = poll_id
         self.pollmessage_id_to_storedmessage_id[poll_message.id] = self.id_counter
         self.triggermessage_id_to_storedmessage_id[trigger_message.id] = self.id_counter

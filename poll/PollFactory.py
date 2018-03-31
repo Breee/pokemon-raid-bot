@@ -3,7 +3,7 @@ from poll.MultiPoll import MultiPoll
 from poll.SinglePoll import SinglePoll
 import logging
 import discord
-logger = logging.getLogger('discord')
+LOGGER = logging.getLogger('discord')
 
 
 class PollFactory(object):
@@ -34,6 +34,7 @@ class PollFactory(object):
         new_poll = MultiPoll(id=self.id_counter,poll_title=poll_title, vote_options=vote_options)
         self.add_poll(poll_id=self.id_counter, poll=new_poll)
         self.id_counter += 1
+        LOGGER.info("Created poll #%d" % new_poll.poll_ID)
         return new_poll
 
     def create_single_poll(self, poll_title):

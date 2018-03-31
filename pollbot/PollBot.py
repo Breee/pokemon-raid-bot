@@ -112,12 +112,15 @@ class PollBot(commands.Bot):
         :param vote_options: List of string which contains vote options.
         :return:
         """
+        LOGGER.info("Creating Multipoll.\n"
+                    "trigger_message: %s,\n"
+                    "poll_title: %s,\n"
+                    "vote_options: %s" % (trigger_message.content, poll_title, vote_options))
         # Create a new poll and post it.
         poll = self.poll_factory.create_multi_poll(poll_title=poll_title, vote_options=vote_options)
         poll_message = await self.send_message(trigger_message.channel,
                                                content="Poll for **%s**" % (poll_title),
                                                embed=poll.embed)
-
         self.message_manager.create_message(trigger_message=trigger_message,
                                             poll_message=poll_message, poll_id=poll.poll_ID)
 
@@ -132,6 +135,7 @@ class PollBot(commands.Bot):
                                sorted(PEOPLE_EMOJI_TO_NUMBER, key=PEOPLE_EMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_people_emoji:
             await self.add_reaction(poll_message, emoji)
+        LOGGER.info("Done.")
 
     async def create_single_poll(self, trigger_message, poll_title):
         """
@@ -140,6 +144,8 @@ class PollBot(commands.Bot):
         :param poll_title: Title of the poll
         :return:
         """
+        LOGGER.info("Creating SinglePoll.\n"
+                    "trigger_message: %s" % trigger_message.content)
         # Create a new poll and post it.
         poll = self.poll_factory.create_single_poll(poll_title=poll_title)
         poll.create_summary_message()
@@ -440,6 +446,7 @@ class PollBot(commands.Bot):
             outdated_messages = []
             LOGGER.info("Updating Polls.")
             for message in self.message_manager.messages.values():
+                LOGGER.info("Updating poll %s" % message.trigger_message.content)
                 # Check if triggermessage exists.
                 trigger_message = await self.get_message_if_exists(channel=message.trigger_message.channel,
                                                                    msg_id=message.trigger_message.id)
