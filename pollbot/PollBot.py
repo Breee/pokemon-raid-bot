@@ -280,7 +280,7 @@ class PollBot(commands.Bot):
         try:
             await self.delete_message(poll_message)
         except discord.NotFound:
-            LOGGER.info("Pollmessage for poll id #%d does not exist anymore" % poll_id)
+            LOGGER.info("Pollmessage #%s for poll #%d does not exists anymore" % (poll_message.id, poll_id))
 
         if post_notification:
             await self.send_message(trigger_message.channel,
