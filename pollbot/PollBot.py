@@ -253,7 +253,10 @@ class PollBot(commands.Bot):
         poll_id = self.message_manager.pollmessage_id_to_poll_id[poll_message.id]
         # add reactions
         poll = self.poll_factory.polls[poll_id]
-        await self.delete_message(poll_message)
+        try:
+            await self.delete_message(poll_message)
+        except discord.NotFound:
+            LOGGER.info("Pollmessage #%s for poll #%d does not exists anymore" % (poll_message.id, poll_id))
 
         if post_notification:
             await self.send_message(trigger_message.channel,
