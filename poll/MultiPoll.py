@@ -85,11 +85,11 @@ class MultiPoll(Poll):
                     people_to_user[username] = 1
             # add a user to people_to_user, if he reacted with an emoji that equals an emoji of the
             # PEOPLE_EMOJI_TO_NUMBER dict.
-            if reaction.emoji in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER.keys():
+            if EmojiStorage.is_people_emoji(emoji=reaction.emoji):
                 if username in people_to_user:
-                    people_to_user[username] += EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
+                    people_to_user[username] += EmojiStorage.get_people_empji_value(reaction.emoji)
                 else:
-                    people_to_user[username] = 1 + EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
+                    people_to_user[username] = 1 + EmojiStorage.get_people_empji_value(reaction.emoji)
         # create fields
         for field in old_embed.fields:
             if field.name in reaction_to_user.keys():

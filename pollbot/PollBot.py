@@ -200,7 +200,7 @@ class PollBot(commands.Bot):
                 LOGGER.warning("Denied reaction, User %s is banned" % user)
                 return
             # reaction has to be part of the vote emojis/ people emojis
-            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
+            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or EmojiStorage.is_people_emoji(reaction.emoji) or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
                     # get poll
@@ -229,7 +229,7 @@ class PollBot(commands.Bot):
             if str(user) in BANNED_USERS:
                 LOGGER.warning("Denied reaction, User %s is banned" % user)
                 return
-            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
+            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or EmojiStorage.is_people_emoji(reaction.emoji) or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
                     # get poll
