@@ -53,7 +53,7 @@ class MultiPoll(Poll):
         """
         embed = discord.Embed(colour=discord.Colour(0x700000))
         for i in range(len(vote_options)):
-            emoji = NUMBER_TO_LETTEREMOJI[i]
+            emoji = EmojiStorage.NUMBER_TO_LETTEREMOJI[i]
             vote_option = vote_options[i]
             field_name = "%s %s" % (emoji, vote_option)
             embed.add_field(name=field_name, value="-", inline=False)
@@ -65,7 +65,6 @@ class MultiPoll(Poll):
         Function which shall update self.embed.
         :return:
         """
-        print("Update embed")
         old_embed = self.original_embed
         new_embed = discord.Embed(title=old_embed.title, colour=discord.Colour(0x700000),
                                   description=old_embed.description)
@@ -86,11 +85,11 @@ class MultiPoll(Poll):
                     people_to_user[username] = 1
             # add a user to people_to_user, if he reacted with an emoji that equals an emoji of the
             # PEOPLE_EMOJI_TO_NUMBER dict.
-            if reaction.emoji in PEOPLE_EMOJI_TO_NUMBER.keys():
+            if reaction.emoji in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER.keys():
                 if username in people_to_user:
-                    people_to_user[username] += PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
+                    people_to_user[username] += EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
                 else:
-                    people_to_user[username] = 1 + PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
+                    people_to_user[username] = 1 + EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[reaction.emoji]
         # create fields
         for field in old_embed.fields:
             if field.name in reaction_to_user.keys():

@@ -50,11 +50,11 @@ class SinglePoll(Poll):
             username = user.mention
             # add a user to people_to_user, if he reacted with an emoji that equals an emoji of the
             # PEOPLE_EMOJI_TO_NUMBER dict.
-            if reaction.emoji in EMOJI_TO_NUMBER.keys():
+            if reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER.keys():
                 if username in people_to_user.keys():
-                    people_to_user[username] += (1+ EMOJI_TO_NUMBER[reaction.emoji])
+                    people_to_user[username] += (1+ EmojiStorage.EMOJI_TO_NUMBER[reaction.emoji])
                 else:
-                    people_to_user[username] = 1 + EMOJI_TO_NUMBER[reaction.emoji]
+                    people_to_user[username] = 1 + EmojiStorage.EMOJI_TO_NUMBER[reaction.emoji]
 
         msg = "**%s**\n" \
               "\n" \

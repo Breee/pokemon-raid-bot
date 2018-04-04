@@ -34,7 +34,7 @@ from discord.ext.commands import Context, CommandError, CommandNotFound
 from discord.ext.commands.view import StringView
 import asyncio
 from utils import replace_quotes
-from poll.emoji_storage import *
+from poll.emoji_storage import EmojiStorage
 import discord
 import datetime
 import aiohttp
@@ -66,28 +66,34 @@ class PollBot(commands.Bot):
         self.add_command(self.help)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
-        global PEOPLE_EMOJI_TO_NUMBER
-        PEOPLE_EMOJI_TO_NUMBER = DEFAULT_PEOPLE_EMOJI_TO_NUMBER
+        self.use_custom_emojies = True
 
     async def on_ready(self):
         LOGGER.info("Bot is ready.")
         self.start_time = datetime.datetime.utcnow()
-        global PEOPLE_EMOJI_TO_NUMBER
-        server_emojis = self.get_all_emojis()
-        for emoji in server_emojis:
-            number = None
-            if "rq_plus_one" in emoji.name:
-                number = 1
-            elif "rq_plus_two" in emoji.name:
-                number = 2
-            elif "rq_plus_three" in emoji.name:
-               number = 3
-            elif "rq_plus_four" in emoji.name:
-                number = 4
-            if number is not None and emoji not in PEOPLE_EMOJI_TO_NUMBER:
-                PEOPLE_EMOJI_TO_NUMBER[emoji] = number
+        await self.init_custom_emojies()
         await self.change_presence(game=discord.Game(name=self.config.playing))
         await self.restore_messages_and_polls()
+
+    async def init_custom_emojies(self):
+        LOGGER.info("Init custom emojies")
+        if self.use_custom_emojies:
+            EmojiStorage.PEOPLE_EMOJI_TO_NUMBER = dict()
+            server_emojis = self.get_all_emojis()
+            for emoji in server_emojis:
+                number = None
+                if "rq_plus_one" in emoji.name:
+                    number = 1
+                elif "rq_plus_two" in emoji.name:
+                    number = 2
+                elif "rq_plus_three" in emoji.name:
+                    number = 3
+                elif "rq_plus_four" in emoji.name:
+                    number = 4
+                if number is not None and emoji not in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER:
+                    EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[emoji] = number
+        if len(EmojiStorage.PEOPLE_EMOJI_TO_NUMBER) != 4:
+            EmojiStorage.PEOPLE_EMOJI_TO_NUMBER = EmojiStorage.DEFAULT_PEOPLE_EMOJI_TO_NUMBER
 
     def run(self):
         super().run(self.config.token, reconnect=True)
@@ -145,14 +151,14 @@ class PollBot(commands.Bot):
                                             poll_message=poll_message, poll_id=poll.poll_ID)
 
         # add vote emojies as reaction
-        sorted_emoji = [(k, LETTEREMOJI_TO_NUMBER[k]) for k in sorted(LETTEREMOJI_TO_NUMBER, key=LETTEREMOJI_TO_NUMBER.get)]
+        sorted_emoji = [(k, EmojiStorage.LETTEREMOJI_TO_NUMBER[k]) for k in sorted(EmojiStorage.LETTEREMOJI_TO_NUMBER, key=EmojiStorage.LETTEREMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_emoji:
             if n <= len(vote_options) - 1:
                 await self.add_reaction(poll_message, emoji)
 
         # add people emojie as reaction
-        sorted_people_emoji = [(k, PEOPLE_EMOJI_TO_NUMBER[k]) for k in
-                               sorted(PEOPLE_EMOJI_TO_NUMBER, key=PEOPLE_EMOJI_TO_NUMBER.get)]
+        sorted_people_emoji = [(k, EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[k]) for k in
+                               sorted(EmojiStorage.PEOPLE_EMOJI_TO_NUMBER, key=EmojiStorage.PEOPLE_EMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_people_emoji:
             await self.add_reaction(poll_message, emoji)
         LOGGER.info("Done.")
@@ -176,8 +182,8 @@ class PollBot(commands.Bot):
                                             poll_message=poll_message, poll_id=poll.poll_ID)
 
         # add people emojie as reaction
-        sorted_people_emoji = [(k, EMOJI_TO_NUMBER[k]) for k in
-                               sorted(EMOJI_TO_NUMBER, key=EMOJI_TO_NUMBER.get)]
+        sorted_people_emoji = [(k, EmojiStorage.EMOJI_TO_NUMBER[k]) for k in
+                               sorted(EmojiStorage.EMOJI_TO_NUMBER, key=EmojiStorage.EMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_people_emoji:
             if n < 4:
                 await self.add_reaction(poll_message, emoji)
@@ -194,7 +200,7 @@ class PollBot(commands.Bot):
                 LOGGER.warning("Denied reaction, User %s is banned" % user)
                 return
             # reaction has to be part of the vote emojis/ people emojis
-            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
+            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
                     # get poll
@@ -223,7 +229,7 @@ class PollBot(commands.Bot):
             if str(user) in BANNED_USERS:
                 LOGGER.warning("Denied reaction, User %s is banned" % user)
                 return
-            if reaction.emoji in LETTEREMOJI_TO_NUMBER or reaction.emoji in PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EMOJI_TO_NUMBER:
+            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
                     # get poll
