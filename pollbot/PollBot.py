@@ -66,6 +66,8 @@ class PollBot(commands.Bot):
         self.add_command(self.help)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
+        global PEOPLE_EMOJI_TO_NUMBER
+        PEOPLE_EMOJI_TO_NUMBER = DEFAULT_PEOPLE_EMOJI_TO_NUMBER
 
     async def on_ready(self):
         LOGGER.info("Bot is ready.")
@@ -79,17 +81,11 @@ class PollBot(commands.Bot):
             elif "rq_plus_two" in emoji.name:
                 number = 2
             elif "rq_plus_three" in emoji.name:
-                number = 3
+               number = 3
             elif "rq_plus_four" in emoji.name:
                 number = 4
-
-            if number is not None:
+            if number is not None and emoji not in PEOPLE_EMOJI_TO_NUMBER:
                 PEOPLE_EMOJI_TO_NUMBER[emoji] = number
-
-        if len(PEOPLE_EMOJI_TO_NUMBER) != 4:
-           PEOPLE_EMOJI_TO_NUMBER = dict()
-           PEOPLE_EMOJI_TO_NUMBER = DEFAULT_PEOPLE_EMOJI_TO_NUMBER
-
         await self.change_presence(game=discord.Game(name=self.config.playing))
         await self.restore_messages_and_polls()
 

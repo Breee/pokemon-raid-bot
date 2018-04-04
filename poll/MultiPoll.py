@@ -65,6 +65,7 @@ class MultiPoll(Poll):
         Function which shall update self.embed.
         :return:
         """
+        print("Update embed")
         old_embed = self.original_embed
         new_embed = discord.Embed(title=old_embed.title, colour=discord.Colour(0x700000),
                                   description=old_embed.description)
