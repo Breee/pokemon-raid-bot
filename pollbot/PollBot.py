@@ -62,6 +62,7 @@ class PollBot(commands.Bot):
         self.add_command(self.ping)
         self.add_command(self.poll)
         self.add_command(self.uptime)
+        self.add_command(self.removeoutdated)
         self.remove_command("help")
         self.add_command(self.help)
         self.start_time = 0
@@ -128,7 +129,16 @@ class PollBot(commands.Bot):
             LOGGER.warning("Denied creation of poll, User %s is banned" % ctx.message.author)
             return
         await self.create_multi_poll(trigger_message=ctx.message, poll_title=poll_title, vote_options=vote_options)
-        self.storage_manager.update_storage(message_manager=self.message_manager, poll_factory=self.poll_factory, client_messages=self.messages)
+        self.storage_manager.update_storage(message_manager=self.message_manager,
+                                            poll_factory=self.poll_factory,
+                                            client_messages=self.messages)
+
+    @commands.command(hidden=True)
+    async def removeoutdated(self, time):
+        self.message_manager.dump_and_remove(float(time))
+        self.storage_manager.update_storage(message_manager=self.message_manager,
+                                            poll_factory=self.poll_factory,
+                                            client_messages=self.messages)
 
     async def create_multi_poll(self, trigger_message, poll_title, vote_options):
         """
@@ -204,7 +214,7 @@ class PollBot(commands.Bot):
                 stored_message = self.message_manager.get_message(poll_message_id=reaction.message.id)
                 if stored_message:
                     # get poll
-                    poll_id =  self.message_manager.pollmessage_id_to_poll_id[reaction.message.id]
+                    poll_id = self.message_manager.pollmessage_id_to_poll_id[reaction.message.id]
                     # add reactions
                     poll = self.poll_factory.polls[poll_id]
                     poll.reactions.append((reaction, user))

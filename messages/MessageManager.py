@@ -1,5 +1,6 @@
 from messages.StoredMessage import StoredMessage
 import logging
+import time
 LOGGER = logging.getLogger('discord')
 
 
@@ -57,8 +58,6 @@ class MessageManager(object):
     def delete_message(self, message_id):
         self.messages.pop(message_id, None)
 
-    def update_message(self, message_id, trigger_message, poll_message, poll_id):
-        pass
 
     def get_pollmessage(self, poll_id):
         for poll_msg, id in self.pollmessage_id_to_poll_id:
@@ -78,5 +77,20 @@ class MessageManager(object):
             message_storage.triggermessage_id_to_storedmessage_id
         self.pollmessage_id_to_poll_id = message_storage.pollmessage_id_to_poll_id
 
+    def dump_and_remove(self, time_span_in_hours):
+        LOGGER.info("Removing messages older than %f" % time_span_in_hours)
+        now = time.time()
+        remove_list = []
+        for msg_id, message in self.messages.items():
+            time_span = ((now - message.creation_time) / 60) / 60
+            if time_span > float(time_span_in_hours):
+                remove_list.append(msg_id)
+
+        for msg_id in remove_list:
+            self.delete_message(message_id=msg_id)
+        LOGGER.info("Removed messages:  %s" % remove_list)
+
+    def message_to_csv(self, msg_id):
+        pass
 
 
