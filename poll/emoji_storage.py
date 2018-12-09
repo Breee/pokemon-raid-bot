@@ -41,7 +41,17 @@ class EmojiStorage(object):
             '\U0001F1EC': 6,
             '\U0001F1ED': 7,
             '\U0001F1EE': 8,
-            '\U0001F1EF': 9
+            '\U0001F1EF': 9,
+            '\U0001F1F0': 10,
+            '\U0001F1F1': 11,
+            '\U0001F1F2': 12,
+            '\U0001F1F3': 13,
+            '\U0001F1F4': 14,
+            '\U0001F1F5': 15,
+            '\U0001F1F6': 16,
+            '\U0001F1F7': 17,
+            '\U0001F1F8': 18,
+            '\U0001F1F9': 19
             }
 
         self.NUMBER_TO_LETTEREMOJI = {val: key for key, val in self.LETTEREMOJI_TO_NUMBER.items()}
