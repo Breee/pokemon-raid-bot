@@ -78,7 +78,7 @@ class MessageManager(object):
         self.pollmessage_id_to_poll_id = message_storage.pollmessage_id_to_poll_id
 
     def dump_and_remove(self, time_span_in_hours):
-        LOGGER.info("Removing messages older than %f" % time_span_in_hours)
+        LOGGER.info("Removing messages older than %f hours" % time_span_in_hours)
         now = time.time()
         remove_list = []
         for msg_id, message in self.messages.items():
