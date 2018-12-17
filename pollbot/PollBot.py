@@ -148,6 +148,7 @@ class PollBot(commands.Bot):
         title = msg.content.replace("Poll for", "")
         poll = self.poll_factory.create_multi_poll(poll_title=title, vote_options=vote_options)
         poll.update_embed()
+        self.messages.append(msg)
         await self.edit_msg(msg, poll.embed)
         self.message_manager.create_message(trigger_message=trigger,
                                             poll_message=msg, poll_id=poll.poll_ID)
@@ -259,10 +260,7 @@ class PollBot(commands.Bot):
                     poll_id =  self.message_manager.pollmessage_id_to_poll_id[reaction.message.id]
                     # add reactions
                     poll = self.poll_factory.polls[poll_id]
-                    try:
-                        poll.reactions.remove((reaction, user))
-                    except:
-                        pass
+                    poll.reactions.remove((reaction, user))
                     # edit poll
                     if isinstance(poll, MultiPoll):
                         poll.update_embed()
