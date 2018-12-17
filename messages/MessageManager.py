@@ -44,7 +44,7 @@ class MessageManager(object):
         elif poll_message_id and poll_message_id in self.pollmessage_id_to_storedmessage_id:
             msg_id = self.pollmessage_id_to_storedmessage_id[poll_message_id]
 
-        if msg_id is not None:
+        if msg_id is not None and msg_id in self.messages:
             return self.messages[msg_id]
         else:
             return None

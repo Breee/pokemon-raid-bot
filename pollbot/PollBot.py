@@ -259,7 +259,10 @@ class PollBot(commands.Bot):
                     poll_id =  self.message_manager.pollmessage_id_to_poll_id[reaction.message.id]
                     # add reactions
                     poll = self.poll_factory.polls[poll_id]
-                    poll.reactions.remove((reaction, user))
+                    try:
+                        poll.reactions.remove((reaction, user))
+                    except:
+                        pass
                     # edit poll
                     if isinstance(poll, MultiPoll):
                         poll.update_embed()
