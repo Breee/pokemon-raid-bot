@@ -63,6 +63,7 @@ class PollBot(commands.Bot):
         self.add_command(self.poll)
         self.add_command(self.uptime)
         self.add_command(self.removeoutdated)
+        self.add_command(self.readpoll)
         self.remove_command("help")
         self.add_command(self.help)
         self.start_time = 0
@@ -139,6 +140,18 @@ class PollBot(commands.Bot):
         self.storage_manager.update_storage(message_manager=self.message_manager,
                                             poll_factory=self.poll_factory,
                                             client_messages=self.messages)
+
+    @commands.command(pass_context=True)
+    async def readpoll(self,ctx, trigger_id, msg_id, *vote_options):
+        msg = await self.get_message_if_exists(channel=ctx.message.channel,msg_id=msg_id)
+        trigger = await self.get_message_if_exists(channel=ctx.message.channel, msg_id=trigger_id)
+        title = msg.content.replace("Poll for", "")
+        poll = self.poll_factory.create_multi_poll(poll_title=title, vote_options=vote_options)
+        poll.update_embed()
+        await self.edit_msg(msg, poll.embed)
+        self.message_manager.create_message(trigger_message=trigger,
+                                            poll_message=msg, poll_id=poll.poll_ID)
+        await self.update_poll_after_restart(msg_id,msg.reactions)
 
     async def create_multi_poll(self, trigger_message, poll_title, vote_options):
         """
@@ -468,6 +481,7 @@ class PollBot(commands.Bot):
 
     async def edit_msg(self, message, embed):
         await self.edit_message(message, message.content, embed=embed)
+
 
     async def update_polls(self):
         outdated_messages = []

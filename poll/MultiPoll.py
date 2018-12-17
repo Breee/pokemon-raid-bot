@@ -55,7 +55,11 @@ class MultiPoll(Poll):
         for i in range(len(vote_options)):
             emoji = EmojiStorage.NUMBER_TO_LETTEREMOJI[i]
             vote_option = vote_options[i]
-            field_name = "%s %s" % (emoji, vote_option)
+            if not vote_option.startswith(emoji):
+                field_name = "%s %s" % (emoji, vote_option)
+            else:
+                field_name = vote_option
+
             embed.add_field(name=field_name, value="-", inline=False)
             self.reaction_to_embed_field[emoji] = field_name
         return embed

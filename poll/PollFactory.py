@@ -61,6 +61,7 @@ class PollFactory(object):
         LOGGER.info("Created poll #%d" % new_poll.poll_ID)
         return new_poll
 
+
     def create_single_poll(self, poll_title):
         """
         Function which creates a new SinglePoll object and stores it in self.polls
