@@ -105,9 +105,6 @@ class PollBot(commands.Bot):
         await super().close()
         await self.session.close()
 
-    async def on_resumed(self):
-        print('resumed...')
-
     @commands.command(hidden=True)
     async def ping(self):
         await self.say("pong!")
