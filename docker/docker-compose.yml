@@ -4,3 +4,5 @@ services:
     build:
       context: .
     restart: always
+    volumes:
+      - ./storage.pickle:/usr/src/app/storage.pickle
