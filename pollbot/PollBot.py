@@ -489,9 +489,8 @@ class PollBot(commands.Bot):
         outdated_messages = []
         LOGGER.info("Updating Polls.")
         self.message_manager.dump_and_remove(240.0)
-        messages = copy.deepcopy(self.message_manager.messages.values())
-        for message in messages:
-            print(message.creation_time)
+        messages = copy.deepcopy(self.message_manager.messages)
+        for message in messages.values():
             LOGGER.info("Updating poll %s" % message.trigger_message.content)
             # Check if triggermessage exists.
             trigger_message = await self.get_message_if_exists(channel=message.trigger_message.channel,
