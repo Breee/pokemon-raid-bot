@@ -40,6 +40,7 @@ import datetime
 import aiohttp
 import logging
 import os
+import copy
 
 LOGGER = logging.getLogger('discord')
 if os.path.isfile('help_msg.txt'):
@@ -488,7 +489,7 @@ class PollBot(commands.Bot):
         outdated_messages = []
         LOGGER.info("Updating Polls.")
         self.message_manager.dump_and_remove(240.0)
-        messages = self.message_manager.messages.values()
+        messages = copy.deepcopy(self.message_manager.messages.values())
         for message in messages:
             print(message.creation_time)
             LOGGER.info("Updating poll %s" % message.trigger_message.content)
