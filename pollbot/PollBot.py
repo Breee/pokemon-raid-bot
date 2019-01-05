@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 from config.Configuration import Configuration
-from messages.MessageManager import MessageManager
 from poll.PollFactory import PollFactory
 from poll.MultiPoll import MultiPoll
 from poll.SinglePoll import SinglePoll
@@ -55,7 +54,6 @@ class PollBot(commands.Bot):
         super().__init__(command_prefix=prefixes, description=description, pm_help=None, help_attrs=dict(hidden=True), fetch_offline_members=False, case_insensitive=True)
         self.config = Configuration(config_file)
         self.poll_factory = PollFactory()
-        self.message_manager = MessageManager()
         self.add_command(self.ping)
         self.add_command(self.poll)
         self.add_command(self.uptime)
@@ -197,9 +195,6 @@ class PollBot(commands.Bot):
         poll = self.poll_factory.create_single_poll(poll_title=poll_title)
         poll.create_summary_message()
         poll_message = await ctx.send(content=poll.summary_message)
-
-        self.message_manager.create_message(trigger_message=trigger_message,
-                                            poll_message=poll_message, poll_id=poll.poll_ID)
 
         # add people emojie as reaction
         sorted_people_emoji = [(k, EmojiStorage.EMOJI_TO_NUMBER[k]) for k in
