@@ -43,5 +43,5 @@ from pollbot.PollBot import PollBot
 
 if __name__ == "__main__":
     LOGGER.info("Starting Bot.")
-    bot = PollBot(prefix="!raid-", description="", config_file="config.conf")
+    bot = PollBot(prefixes=["!raid-", "!r-", "!R-", "!RAID-"], description="", config_file="./config/config.ini")
     bot.run()
