@@ -12,7 +12,6 @@ RUN touch /var/run/supervisor.sock && chmod 777 /var/run/supervisor.sock
 # clone project
 RUN git clone https://github.com/Breee/pokemon-raid-bot.git /usr/src/app/
 RUN pip install --no-cache-dir -r requirements.txt
-COPY config.ini /usr/src/app/config/config.ini
 COPY ./supervisord.conf /
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
