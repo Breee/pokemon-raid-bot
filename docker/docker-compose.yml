@@ -3,7 +3,12 @@ services:
   raidquaza:
     build:
       context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./config.ini:/usr/src/app/config/config.ini
     restart: always
+    networks:
+      - default
 
   poll-db:
     image: mysql:5
@@ -15,8 +20,6 @@ services:
     volumes:
       - ./volumes/mysql/db:/var/lib/mysql
     restart: always
-    ports:
-      - "3307:3306"
     networks:
       - default
 
