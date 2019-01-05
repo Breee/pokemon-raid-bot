@@ -1,0 +1,11 @@
+[bot]
+token = <TOKEN>
+
+[database]
+host = localhost
+user = pollman
+password= <PW>
+port= 3306
+database= poll-db
+dialect = mysql
+driver = mysqlconnector

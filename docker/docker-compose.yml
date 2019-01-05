@@ -4,5 +4,31 @@ services:
     build:
       context: .
     restart: always
+
+  poll-db:
+    image: mysql:5
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: polldb
+      MYSQL_USER: pollman
+      MYSQL_PASSWORD: bestpw
     volumes:
-      - ./storage.pickle:/usr/src/app/storage.pickle
+      - ./volumes/mysql/db:/var/lib/mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    networks:
+      - default
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=poll-db
+      - PMA_PORT=3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - poll-db
+    networks:
+      - default
+    restart: always
