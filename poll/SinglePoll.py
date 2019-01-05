@@ -24,8 +24,7 @@ SOFTWARE.
 
 from poll.emoji_storage import *
 from poll.Poll import Poll, PollCreationException
-import logging
-logger = logging.getLogger('discord')
+from globals.globals import LOGGER
 
 
 class SinglePoll(Poll):
@@ -52,7 +51,7 @@ class SinglePoll(Poll):
             # PEOPLE_EMOJI_TO_NUMBER dict.
             if reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER.keys():
                 if username in people_to_user.keys():
-                    people_to_user[username] += (1+ EmojiStorage.EMOJI_TO_NUMBER[reaction.emoji])
+                    people_to_user[username] += (1 + EmojiStorage.EMOJI_TO_NUMBER[reaction.emoji])
                 else:
                     people_to_user[username] = 1 + EmojiStorage.EMOJI_TO_NUMBER[reaction.emoji]
 

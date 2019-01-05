@@ -27,8 +27,9 @@ from poll.MultiPoll import MultiPoll
 from poll.SinglePoll import SinglePoll
 import logging
 import discord
-LOGGER = logging.getLogger('discord')
-
+from globals.globals import LOGGER
+import database.dbmodels as models
+import uuid
 
 class PollFactory(object):
     """
@@ -47,22 +48,23 @@ class PollFactory(object):
                 "We expect a dictionary oft the form: { poll_ID -> poll}" % (dict.__name__, polls))
         self.id_counter = len(self.polls)
 
-    def create_multi_poll(self, poll_title, vote_options):
+    def create_multi_poll(self, poll_title, vote_options, id=None, reaction_to_user=dict(), user_to_amount=dict()):
         """
         Function which creates a new MultiPoll object and stores it in self.polls
         :param poll_title: String which denotes the title of a poll
         :param vote_options: List of Strings which denote the vote options.
         :return: void
         """
+        if not id:
+            id = str(uuid.uuid4())
         # create a new Poll object.
-        new_poll = MultiPoll(id=self.id_counter,poll_title=poll_title, vote_options=vote_options)
-        self.add_poll(poll_id=self.id_counter, poll=new_poll)
-        self.id_counter += 1
-        LOGGER.info("Created poll #%d" % new_poll.poll_ID)
+        new_poll = MultiPoll(id=id, poll_title=poll_title, vote_options=vote_options, reaction_to_user=reaction_to_user,user_to_amount=user_to_amount)
+        self.add_poll(poll_id=id, poll=new_poll)
+        LOGGER.info("Created poll %s" % new_poll.poll_id)
         return new_poll
 
 
-    def create_single_poll(self, poll_title):
+    def create_single_poll(self,poll_title, id=None):
         """
         Function which creates a new SinglePoll object and stores it in self.polls
         :param poll_title: String which denotes the title of a poll
@@ -70,8 +72,10 @@ class PollFactory(object):
         :return: void
         """
         # create a new Poll object.
-        new_poll = SinglePoll(id=self.id_counter, poll_title=poll_title)
-        self.add_poll(poll_id=self.id_counter, poll=new_poll)
+        if not id:
+            id = str(uuid.uuid4())
+        new_poll = SinglePoll(id=id, poll_title=poll_title)
+        self.add_poll(poll_id=id, poll=new_poll)
         self.id_counter += 1
         return new_poll
 
@@ -98,5 +102,16 @@ class PollFactory(object):
         return self.polls[poll_id]
 
     def restore_polls(self, polls):
-        self.polls = polls
-        self.id_counter = len(polls)
+        poll_dict = dict()
+        for poll in polls:
+            restored_poll = None
+            if isinstance(poll, models.Poll):
+                if not poll.vote_options:
+                    restored_poll = self.create_single_poll(poll_title=poll.name, id=poll.external_id)
+                elif len(poll.vote_options) > 0:
+                    restored_poll = self.create_multi_poll(poll_title=poll.name, vote_options=poll.vote_options, id=poll.external_id, reaction_to_user=poll.reaction_to_user, user_to_amount=poll.user_to_amount)
+                if restored_poll:
+                    poll_dict[poll.external_id] = restored_poll
+
+        self.polls = poll_dict
+        self.id_counter = len(poll_dict)

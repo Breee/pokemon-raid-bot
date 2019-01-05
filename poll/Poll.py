@@ -26,7 +26,7 @@ from poll.emoji_storage import *
 import logging
 import time
 import discord
-logger = logging.getLogger('discord')
+from globals.globals import LOGGER
 
 
 class PollCreationException(Exception):
@@ -39,7 +39,7 @@ class Poll(object):
     """
 
     def __init__(self, id, poll_title):
-        self.poll_ID = id # some human readable id.
+        self.poll_id = id # some id.
         self.creation_time = time.time() # timestamp
         self.poll_title = poll_title # string
         self.reactions = []
