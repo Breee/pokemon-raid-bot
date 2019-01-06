@@ -108,7 +108,7 @@ class DbHandler(object):
                     self.session.rollback()
 
 
-    def get_poll(self, external_id:int) -> models.Poll:
+    def get_poll(self, external_id:str) -> models.Poll:
         try:
             poll = self.session.query(models.Poll).filter(models.Poll.external_id == external_id).one()
         except sqlalchemy.orm.exc.NoResultFound:

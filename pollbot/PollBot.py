@@ -182,7 +182,7 @@ class PollBot(commands.Bot):
         for emoji, n in sorted_people_emoji:
             await poll_message.add_reaction(emoji)
 
-    async def create_single_poll(self, ctx, trigger_message, poll_title):
+    async def create_single_poll(self,trigger_message, poll_title):
         """
         Function that creates a new Singlepoll and posts it.
         :param trigger_message: Message which triggered the creation of the poll
@@ -194,14 +194,15 @@ class PollBot(commands.Bot):
         # Create a new poll and post it.
         poll = self.poll_factory.create_single_poll(poll_title=poll_title)
         poll.create_summary_message()
-        poll_message = await ctx.send(content=poll.summary_message)
+        poll_message = await trigger_message.channel.send(content=poll.summary_message)
+        self.db_handler.add_poll(poll, trigger_message, poll_message)
 
         # add people emojie as reaction
         sorted_people_emoji = [(k, EmojiStorage.EMOJI_TO_NUMBER[k]) for k in
                                sorted(EmojiStorage.EMOJI_TO_NUMBER, key=EmojiStorage.EMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_people_emoji:
             if n < 4:
-                await poll_message.add_reaction(poll_message, emoji)
+                await poll_message.add_reaction(emoji)
 
     async def on_raw_reaction_add(self, ctx):
         if not self.ready:
@@ -226,7 +227,7 @@ class PollBot(commands.Bot):
                         await reaction.message.edit(content=reaction.message.content, embed=poll.embed)
                     elif isinstance(poll, SinglePoll):
                         poll.create_summary_message()
-                        await reaction.message.edit(poll.summary_message)
+                        await reaction.message.edit(content=poll.summary_message)
                     # update poll in DB
                     self.db_handler.update_poll(poll)
 
@@ -252,7 +253,7 @@ class PollBot(commands.Bot):
                         await reaction.message.edit(content=reaction.message.content, embed=poll.embed)
                     elif isinstance(poll, SinglePoll):
                         poll.create_summary_message()
-                        await reaction.message.edit(reaction.message, poll.summary_message)
+                        await reaction.message.edit(content=poll.summary_message)
                     # update poll in DB
                     self.db_handler.update_poll(poll)
 
@@ -297,7 +298,7 @@ class PollBot(commands.Bot):
                 await poll_message.edit(content=poll_message.content, embed=poll.embed)
             elif isinstance(poll, SinglePoll):
                 poll.create_summary_message()
-                await poll_message.edit(poll.summary_message)
+                await poll_message.edit(content=poll.summary_message)
             self.db_handler.update_poll(poll)
 
     def is_multi_poll_command(self, message_content):
@@ -318,7 +319,7 @@ class PollBot(commands.Bot):
         poll_command = 'raid '
         return message_content.lower().startswith(poll_command)
 
-    async def on_message(self, message):
+    async def on_message(self,message):
         """
         Function which handles posted messages by anyone.
         Used to check whether a message triggers the creation of a SinglePoll object.
