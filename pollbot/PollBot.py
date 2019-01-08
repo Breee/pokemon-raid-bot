@@ -59,6 +59,7 @@ class PollBot(commands.Bot):
         self.add_command(self.uptime)
         self.add_command(self.readpoll)
         self.add_command(self.update)
+        self.add_command(self.ready)
         self.start_time = 0.0
         self.session = aiohttp.ClientSession(loop=self.loop)
         self.use_custom_emojies = True
@@ -109,7 +110,13 @@ class PollBot(commands.Bot):
 
     @commands.command(help="Pings the Bot.")
     async def ping(self, ctx):
-        await ctx.send("pong!")
+        await ctx.send("pong!, ready: %s" % self.ready)
+
+    @commands.command(help="Ready the Bot.", hidden=True)
+    @commands.is_owner()
+    async def ready(self, ctx):
+        self.ready = not self.ready
+        await ctx.send("ready: %s" % self.ready)
 
     @commands.command(hidden=True)
     async def uptime(self, ctx):
@@ -369,25 +376,28 @@ class PollBot(commands.Bot):
         # get enabled polls
         polls = self.db_handler.get_polls(age=10)
         for poll in polls:
-            LOGGER.info("Updating poll %s" % poll.external_id)
-            # Check if triggermessage exists.
-            trigger_message = await self.get_message_if_exists(channel_id=poll.channel,
-                                                               message_id=poll.trigger_message)
-            # Check if poll exists.
-            poll_message = await self.get_message_if_exists(channel_id=poll.channel,
-                                                            message_id=poll.poll_message)
-            # Case 1: triggermessage + poll exists. ---> Update polls.
-            # Case 2: triggermessage exists, poll exists not.
-            # Case 3: triggermessage does not exist, poll exists.
-            # Case 4: triggermessage + poll do not exist anymore
-            if trigger_message and poll_message:
-                await self.update_poll_after_restart(poll_message.id, poll_message.reactions)
-            elif trigger_message is None and poll_message:
-                LOGGER.debug("trigger_message does not exist anymore")
-                await poll_message.delete()
-                self.db_handler.disable_poll_via_id(poll_message.id)
-            elif trigger_message is None and poll_message is None:
-                LOGGER.debug("trigger_message and poll do not exist anymore")
+            try:
+                LOGGER.info("Updating poll %s" % poll.external_id)
+                # Check if triggermessage exists.
+                trigger_message = await self.get_message_if_exists(channel_id=poll.channel,
+                                                                   message_id=poll.trigger_message)
+                # Check if poll exists.
+                poll_message = await self.get_message_if_exists(channel_id=poll.channel,
+                                                                message_id=poll.poll_message)
+                # Case 1: triggermessage + poll exists. ---> Update polls.
+                # Case 2: triggermessage exists, poll exists not.
+                # Case 3: triggermessage does not exist, poll exists.
+                # Case 4: triggermessage + poll do not exist anymore
+                if trigger_message and poll_message:
+                    await self.update_poll_after_restart(poll_message.id, poll_message.reactions)
+                elif trigger_message is None and poll_message:
+                    LOGGER.debug("trigger_message does not exist anymore")
+                    await poll_message.delete()
+                    self.db_handler.disable_poll_via_id(poll_message.id)
+                elif trigger_message is None and poll_message is None:
+                    LOGGER.debug("trigger_message and poll do not exist anymore")
+            except Exception as err:
+                LOGGER.critical("Error. %s" % err)
         LOGGER.info("Polls Updated.")
 
     async def restore_messages_and_polls(self):
