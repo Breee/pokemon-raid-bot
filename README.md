@@ -8,14 +8,17 @@ Currently the Bot can only create Polls.
 ```
 pip3 install discord.py
 ```
-#### 2. Put the token of your Bot-user into the file config.conf
+#### 2. Adjust config.ini
 ```
 token=<token>
-playing=I enjoy raiding!
 ```
+todo. 
 
 #### 3. Run the bot
 
 ```
 python3 start_bot.py
 ```
+
+## Docker deployment
+- TODO
