@@ -10,9 +10,20 @@ pip3 install discord.py
 ```
 #### 2. Adjust config.ini
 ```
-token=<token>
+
+[bot]
+token = <bot_token>
+
+[database]
+host = localhost
+database = db_name
+user = user_name
+password = password
+port = 3306
+dialect = mysql
+driver = mysqlconnector
 ```
-todo. 
+The db + user must exists
 
 #### 3. Run the bot
 
