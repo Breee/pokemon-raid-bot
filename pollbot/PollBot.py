@@ -374,7 +374,7 @@ class PollBot(commands.Bot):
         outdated_messages = []
         LOGGER.info("Updating Polls.")
         # get enabled polls
-        polls = self.db_handler.get_polls(age=10)
+        polls = self.db_handler.get_polls(age=1)
         for poll in polls:
             try:
                 LOGGER.info("Updating poll %s" % poll.external_id)
