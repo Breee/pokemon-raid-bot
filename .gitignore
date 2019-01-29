@@ -14,3 +14,7 @@ config/config\.ini
 docker/config\.ini
 
 *.ini
+
+docker/volumes/mysql/db/
+
+docker/volumes/mysql/
