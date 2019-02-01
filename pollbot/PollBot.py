@@ -35,6 +35,7 @@ import aiohttp
 import os
 from globals.globals import LOGGER
 from database.dbhandler import DbHandler
+from database.dbmodels import Poll
 import asyncio
 import sys
 import traceback
@@ -74,7 +75,7 @@ class PollBot(commands.Bot):
         self.start_time = datetime.datetime.utcnow()
         await self.init_custom_emojies()
         self.ready = False
-        await self.restore_messages_and_polls()
+        await self.restore_messages_and_polls(days=1)
         self.ready = True
 
 
@@ -127,10 +128,10 @@ class PollBot(commands.Bot):
         await ctx.send(HELP_MSG)
 
     @commands.command()
-    async def update(self, ctx):
+    async def update(self, ctx, days):
         self.ready = False
         await ctx.send("Updating polls...")
-        await self.restore_messages_and_polls()
+        await self.restore_messages_and_polls(days)
         await ctx.send("Ready!")
         self.ready = True
 
@@ -370,11 +371,10 @@ class PollBot(commands.Bot):
         ctx = await self.get_context(message)
         await self.invoke(ctx)
 
-    async def update_polls(self):
-        outdated_messages = []
-        LOGGER.info("Updating Polls.")
+    async def update_polls(self, days=1):
+        LOGGER.info("Updating Polls of the last %d day(s)" % days)
         # get enabled polls
-        polls = self.db_handler.get_polls(age=1)
+        polls = self.db_handler.get_polls(age=days)
         for poll in polls:
             try:
                 LOGGER.info("Updating poll %s" % poll.external_id)
@@ -400,9 +400,9 @@ class PollBot(commands.Bot):
                 LOGGER.critical("Error. %s" % err)
         LOGGER.info("Polls Updated.")
 
-    async def restore_messages_and_polls(self):
+    async def restore_messages_and_polls(self, days):
         self.poll_factory.restore_polls(polls=self.db_handler.get_polls())
-        await self.update_polls()
+        await self.update_polls(days)
 
     async def get_message_if_exists(self, channel_id, message_id):
         try:

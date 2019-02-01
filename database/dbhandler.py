@@ -32,10 +32,10 @@ from typing import List
 def transaction_wrapper(func):
     def _wrap_func(*args, **kwargs):
         self = args[0]
-        Session = sessionmaker(bind=self.engine, expire_on_commit = False)
+        session = sessionmaker(bind=self.engine, expire_on_commit = False)
 
         # new session.   no connections are in use.
-        self.session = Session()
+        self.session = session()
         try:
             # execute transaction statements.
             res = func(*args, **kwargs)
