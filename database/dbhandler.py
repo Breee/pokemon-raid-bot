@@ -134,9 +134,12 @@ class DbHandler(object):
 
     @transaction_wrapper
     def get_polls(self, age=None) -> List[models.Poll]:
+        LOGGER.info(f'Getting polls with age {age}')
         if age:
             since = datetime.datetime.now() - datetime.timedelta(days=age)
+            LOGGER.info(f'since: {since}')
             polls = self.session.query(models.Poll).filter(models.Poll.creation_time >= since)
+            LOGGER.info(f'polls: {polls}')
         else:
             polls = self.session.query(models.Poll).filter()
         return polls

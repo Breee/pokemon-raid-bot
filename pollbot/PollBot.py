@@ -69,14 +69,16 @@ class PollBot(commands.Bot):
         self.ready = False
 
     async def on_ready(self):
-        LOGGER.info("Bot is ready.")
+        LOGGER.info("Bot initializing")
         # make mentionable.
         self.command_prefix.extend([f'<@!{self.user.id}> ', f'<@{self.user.id}> '])
         self.start_time = datetime.datetime.utcnow()
         await self.init_custom_emojies()
         self.ready = False
+        LOGGER.info("Restoring messages")
         await self.restore_messages_and_polls(days=1)
         self.ready = True
+        LOGGER.info("Bot ready")
 
 
     async def init_custom_emojies(self):
@@ -401,7 +403,8 @@ class PollBot(commands.Bot):
         LOGGER.info("Polls Updated.")
 
     async def restore_messages_and_polls(self, days):
-        self.poll_factory.restore_polls(polls=self.db_handler.get_polls())
+        polls = self.db_handler.get_polls()
+        self.poll_factory.restore_polls(polls=polls)
         await self.update_polls(days)
 
     async def get_message_if_exists(self, channel_id, message_id):
