@@ -102,6 +102,7 @@ class PollBot(commands.Bot):
                         EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[emoji] = number
             if len(EmojiStorage.PEOPLE_EMOJI_TO_NUMBER) != 4:
                 EmojiStorage.PEOPLE_EMOJI_TO_NUMBER = EmojiStorage.DEFAULT_PEOPLE_EMOJI_TO_NUMBER
+        LOGGER.info("Done.")
 
     def run(self):
         super().run(self.config.token, reconnect=True)
@@ -422,8 +423,11 @@ class PollBot(commands.Bot):
         elif isinstance(error, commands.DisabledCommand):
             await ctx.author.send('Sorry. This command is disabled and cannot be used.')
         elif isinstance(error, commands.CommandInvokeError):
-            print(f'In {ctx.command.qualified_name}:', file=sys.stderr)
+            LOGGER.critical(f'In {ctx.command.qualified_name}:', file=sys.stderr)
             traceback.print_tb(error.original.__traceback__)
-            print(f'{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
+            LOGGER.critical(f'{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.author.send('Sorry. This command is not how this command works.\n %s' % HELP_MSG)
+        else:
+            LOGGER.critical(error)
+
