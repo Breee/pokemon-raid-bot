@@ -66,6 +66,7 @@ class PollBot(commands.Bot):
         self.use_custom_emojies = True
         self.db_handler = DbHandler(host=self.config.db_host, user=self.config.db_user, password=self.config.db_password,
                                     port=self.config.db_port, database=self.config.db_name, dialect=self.config.db_dialect, driver=self.config.db_driver)
+
         self.ready = False
 
     async def on_ready(self):
@@ -88,6 +89,7 @@ class PollBot(commands.Bot):
             if self.use_custom_emojies:
                 EmojiStorage.PEOPLE_EMOJI_TO_NUMBER = dict()
                 server_emojis = self.emojis
+                print(server_emojis)
                 for emoji in server_emojis:
                     number = None
                     if "rq_plus_one" in emoji.name:
@@ -98,8 +100,8 @@ class PollBot(commands.Bot):
                         number = 3
                     elif "rq_plus_four" in emoji.name:
                         number = 4
-                    if number is not None and emoji not in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER:
-                        EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[emoji] = number
+                    if number is not None and emoji.id not in EmojiStorage.PEOPLE_EMOJI_TO_NUMBER:
+                        EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[emoji.id] = number
             if len(EmojiStorage.PEOPLE_EMOJI_TO_NUMBER) != 4:
                 EmojiStorage.PEOPLE_EMOJI_TO_NUMBER = EmojiStorage.DEFAULT_PEOPLE_EMOJI_TO_NUMBER
         LOGGER.info("Done.")
@@ -191,7 +193,7 @@ class PollBot(commands.Bot):
         sorted_people_emoji = [(k, EmojiStorage.PEOPLE_EMOJI_TO_NUMBER[k]) for k in
                                sorted(EmojiStorage.PEOPLE_EMOJI_TO_NUMBER, key=EmojiStorage.PEOPLE_EMOJI_TO_NUMBER.get)]
         for emoji, n in sorted_people_emoji:
-            await poll_message.add_reaction(emoji)
+            await poll_message.add_reaction(self.get_emoji(emoji))
 
     async def create_single_poll(self,trigger_message, poll_title):
         """
@@ -225,7 +227,7 @@ class PollBot(commands.Bot):
         user = self.get_user(ctx.user_id)
         if user != self.user:
             # reaction has to be part of the vote emojis/ people emojis
-            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or EmojiStorage.is_people_emoji(reaction.emoji) or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
+            if str(reaction.emoji) in EmojiStorage.LETTEREMOJI_TO_NUMBER or EmojiStorage.is_people_emoji(reaction.emoji) or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
                 # get poll
                 poll_db = self.db_handler.get_poll_with_message_id(message_id=reaction.message.id)
                 # add reactions
@@ -251,7 +253,7 @@ class PollBot(commands.Bot):
         reaction = discord.Reaction(message=message, data=data)
         user = self.get_user(ctx.user_id)
         if user != self.user:
-            if reaction.emoji in EmojiStorage.LETTEREMOJI_TO_NUMBER or EmojiStorage.is_people_emoji(
+            if str(reaction.emoji) in EmojiStorage.LETTEREMOJI_TO_NUMBER or EmojiStorage.is_people_emoji(
                     reaction.emoji) or reaction.emoji in EmojiStorage.EMOJI_TO_NUMBER:
                 poll_db = self.db_handler.get_poll_with_message_id(message_id=reaction.message.id)
                 if poll_db:
@@ -423,9 +425,9 @@ class PollBot(commands.Bot):
         elif isinstance(error, commands.DisabledCommand):
             await ctx.author.send('Sorry. This command is disabled and cannot be used.')
         elif isinstance(error, commands.CommandInvokeError):
-            LOGGER.critical(f'In {ctx.command.qualified_name}:', file=sys.stderr)
+            LOGGER.critical(f'In {ctx.command.qualified_name}:')
             traceback.print_tb(error.original.__traceback__)
-            LOGGER.critical(f'{error.original.__class__.__name__}: {error.original}', file=sys.stderr)
+            LOGGER.critical(f'{error.original.__class__.__name__}: {error.original}')
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.author.send('Sorry. This command is not how this command works.\n %s' % HELP_MSG)
         else:

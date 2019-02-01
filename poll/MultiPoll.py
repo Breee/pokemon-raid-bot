@@ -85,8 +85,8 @@ class MultiPoll(Poll):
             username = user.display_name
             # add a user to reaction_to_user if he reacted with an emoji that equals an emoji mapped
             # to a field in the embed
-            if reaction.emoji in self.reaction_to_embed_field.keys():
-                self.reaction_to_user.setdefault(self.reaction_to_embed_field[reaction.emoji], []).append(username)
+            if str(reaction.emoji) in self.reaction_to_embed_field.keys():
+                self.reaction_to_user.setdefault(self.reaction_to_embed_field[str(reaction.emoji)], []).append(username)
                 if username not in self.user_to_amount.keys():
                     # by default every user comes alone. i.e. counts as one person.
                     self.user_to_amount[username] = 1

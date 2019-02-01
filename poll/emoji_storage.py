@@ -68,15 +68,19 @@ class EmojiStorage(object):
             }
 
         self.PEOPLE_EMOJI_TO_NUMBER = dict()
+        self.ID_TO_PEOPLE_EMOJI = dict()
 
     def is_people_emoji(self, emoji):
-        return emoji in self.DEFAULT_PEOPLE_EMOJI_TO_NUMBER.keys() or emoji in self.PEOPLE_EMOJI_TO_NUMBER.keys()
+        if isinstance(emoji,str):
+            return emoji in self.DEFAULT_PEOPLE_EMOJI_TO_NUMBER.keys()
+        elif hasattr(emoji, 'id'):
+            return emoji.id in self.PEOPLE_EMOJI_TO_NUMBER.keys()
 
     def get_people_empji_value(self,emoji):
-        if emoji in self.DEFAULT_PEOPLE_EMOJI_TO_NUMBER.keys():
+        if isinstance(emoji, str) and emoji in self.DEFAULT_PEOPLE_EMOJI_TO_NUMBER.keys():
             return self.DEFAULT_PEOPLE_EMOJI_TO_NUMBER[emoji]
-        elif emoji in self.PEOPLE_EMOJI_TO_NUMBER.keys():
-            return self.PEOPLE_EMOJI_TO_NUMBER[emoji]
+        elif hasattr(emoji, 'id') and emoji.id in self.PEOPLE_EMOJI_TO_NUMBER.keys():
+            return self.PEOPLE_EMOJI_TO_NUMBER[emoji.id]
 
 
 EmojiStorage = EmojiStorage()
